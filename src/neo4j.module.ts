@@ -8,11 +8,11 @@ import { Neo4jTransactionInterceptor } from './interceptors/neo4j-transaction.in
 import { Neo4jTypeInterceptor } from './interceptors/neo4j-type.interceptor';
 
 @Module({})
-export class Neo4jModule {
+export class Neo4jExcelModule {
 
     static forRoot(config: Neo4jConfig): DynamicModule {
         return {
-            module: Neo4jModule,
+            module: Neo4jExcelModule,
             global: true,
             providers: [
                 {
@@ -34,7 +34,7 @@ export class Neo4jModule {
 
     static forRootAsync(configProvider: any): DynamicModule {
         return {
-            module: Neo4jModule,
+            module: Neo4jExcelModule,
             global: true,
             imports: [
                 ConfigModule,
@@ -60,7 +60,7 @@ export class Neo4jModule {
 
     static fromEnv(): DynamicModule {
         return {
-            module: Neo4jModule,
+            module: Neo4jExcelModule,
             global: true,
             imports: [
                 ConfigModule,

@@ -2007,8 +2007,6 @@ async getJointSpacesAnExcelFile(res, body:ExportExcelDto,header:UserInformationI
 
 }
 
-
-
 async getContactByRealmAndByLanguage(res, header:UserInformationInterface){
   const {language,username,realm}= header;
 
@@ -2077,6 +2075,8 @@ async getContactByRealmAndByLanguage(res, header:UserInformationInterface){
      
   
 }
+
+
 
 async addBuildingWithCobie(file: Express.Multer.File,header:MainHeaderInterface){
   try {
