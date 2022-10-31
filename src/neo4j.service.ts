@@ -50,7 +50,7 @@ import { RelationDirection } from "./constant/relation.direction.enum";
 import { ExportExcelDto, ExportExcelDtoForSystem, ExportExcelDtoForType } from "./dtos/export-import.dtos";
 import { HeaderInterface, MainHeaderInterface, UserInformationInterface } from "./interfaces/header.interface";
 import { CustomClassificationError } from "./constant/import-export.error.enum";
-import { building_already_exist_object, floor_already_exist_object, space_already_exist_object, space_has_already_relation_object, there_are_no_contacts_object, there_are_no_jointSpaces_object, there_are_no_spaces_object, there_are_no_system_or_component_or_both_object, there_are_no_type_or_component_or_type_id_is_wrong_object, there_are_no_zones_object } from "./constant/import-export.error.object";
+import { building_already_exist_object, contact_already_exist_object, floor_already_exist_object, space_already_exist_object, space_has_already_relation_object, there_are_no_contacts_object, there_are_no_jointSpaces_object, there_are_no_spaces_object, there_are_no_system_or_component_or_both_object, there_are_no_type_or_component_or_type_id_is_wrong_object, there_are_no_zones_object } from "./constant/import-export.error.object";
 const exceljs = require('exceljs');
 const { v4: uuidv4 } = require('uuid');
 
@@ -2369,6 +2369,82 @@ async addZonesToBuilding(file: Express.Multer.File,header:MainHeaderInterface, b
 
 }
 
+async addContacts(file: Express.Multer.File,header:MainHeaderInterface)  {
+  try {
+    let email:string;
+  let createdByEmail:string;
+  const {realm}= header;
+
+ 
+    let data=[]
+    let buffer = new Uint8Array(file.buffer);
+    const workbook = new exceljs.Workbook();
+  
+  
+  await workbook.xlsx.load(buffer).then(function async(book) {
+      const firstSheet =  book.getWorksheet(2);
+      firstSheet.eachRow({ includeEmpty: false }, function(row) {
+        data.push(row.values);
+      });
+   })
+  
+  
+  for (let i = 1; i < data.length; i++) {
+    
+    const [code, ...rest] =await data[i][4].split(new RegExp(/:\s{1}/g));
+    
+    let {createdCypher,createdRelationCypher} =await this.createCypherForClassification(realm,'OmniClass34',code,"p","clsp","cls","CLASSIFIED_BY")
+
+    if(typeof data[i][1]=='object'){
+      email=await data[i][1].text;
+    }else {
+      email= await data[i][1];
+    }
+    if(typeof data[i][2]=='object'){
+      createdByEmail=await data[i][2].text;
+    }else {
+      createdByEmail= await data[i][2];
+    }
+
+    let checkEmail = await this.findChildrensByLabelsAndFilters(['Contacts'],{realm},['Contact'],{email,isDeleted:false});
+    if(checkEmail.length==0){
+      let cypher=`MATCH (c:Contacts {realm:"${realm}"}) ${createdCypher} \
+      MERGE (p:Contact {email:"${email}",createdOn:"${data[i][3]}",company:"${data[i][5]}", phone:"${data[i][6]}",externalSystem:"${data[i][7]}",externalObject:"${data[i][8]}",externalIdentifier:"${data[i][9]}",department:"${data[i][10]}",organizationCode:"${data[i][11]}", \
+      givenName:"${data[i][12]}",familyName:"${data[i][13]}",street:"${data[i][14]}",postalBox:"${data[i][15]}",town:"${data[i][16]}",stateRegion:"${data[i][17]}",postalCode:"${data[i][18]}",country:"${data[i][19]}",canDisplay:true,isDeleted:false,isActive:true,className:"Contact",key:"${this.keyGenerate()}",canDelete:true} )\
+      MERGE (c)-[:PARENT_OF]->(p)  ${createdRelationCypher}`
+      await this.write(cypher);
+
+
+    let cypher2 = `MATCH (p:Contact {email:"${email}"}) MATCH (p2:Contact {email:"${createdByEmail}"}) MERGE (p)-[:CREATED_BY]->(p2)`
+    await this.write(cypher2);
+    }else{
+      throw new HttpException(contact_already_exist_object,400)
+    }
+  
+    }
+   
+  } catch (error) {
+    // if(error.response?.code===10007){
+    //   contact_already_exist(error.response?.name)
+    // }else {
+    //   default_error()
+    // }
+    if(error.response?.code){
+      throw new HttpException(
+        { message: error.response?.message, code: error.response?.code },
+        error.status
+      );
+    }else {
+      //default_error()
+      throw new HttpException(
+        {code: CustomClassificationError.DEFAULT_ERROR },
+        error.status
+      );
+    }
+   }
+  
+  
+};
 
 
 
