@@ -2025,7 +2025,7 @@ async getContactByRealmAndByLanguage(res, header:UserInformationInterface){
     
     let returnData =await this.read(cypher2)
     data= returnData.records;
-    
+    console.log(data)
   if (data.length==0) {
     throw new HttpException(there_are_no_contacts_object,404)
   }else{
