@@ -2053,6 +2053,7 @@ async getContactByRealmAndByLanguage(res, header:UserInformationInterface){
            ];
     
     
+           console.log(jsonData);
     worksheet.addRows(jsonData);
     
     return workbook.xlsx.write(res).then(function () {
