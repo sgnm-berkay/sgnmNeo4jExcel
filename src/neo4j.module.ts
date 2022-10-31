@@ -1,6 +1,6 @@
 import { Module, DynamicModule, Provider } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Neo4jService } from './neo4j.service';
+import { Neo4jExcelService } from './neo4j.service';
 import { Neo4jConfig } from './interfaces/neo4j-config.interface';
 import { NEO4J_OPTIONS, NEO4J_DRIVER } from './neo4j.constants';
 import { createDriver } from './neo4j.utils';
@@ -24,10 +24,10 @@ export class Neo4jExcelModule {
                     inject: [ NEO4J_OPTIONS ],
                     useFactory: async (config: Neo4jConfig) => createDriver(config),
                 },
-                Neo4jService,
+                Neo4jExcelService,
             ],
             exports: [
-                Neo4jService,
+                Neo4jExcelService,
             ]
         }
     }
@@ -50,10 +50,10 @@ export class Neo4jExcelModule {
                     inject: [ NEO4J_OPTIONS ],
                     useFactory: async (config: Neo4jConfig) => createDriver(config),
                 },
-                Neo4jService,
+                Neo4jExcelService,
             ],
             exports: [
-                Neo4jService,
+                Neo4jExcelService,
             ]
         }
     }
@@ -83,10 +83,10 @@ export class Neo4jExcelModule {
                     inject: [ NEO4J_OPTIONS ],
                     useFactory: async (config: Neo4jConfig) => createDriver(config),
                 },
-                Neo4jService,
+                Neo4jExcelService,
             ],
             exports: [
-                Neo4jService,
+                Neo4jExcelService,
             ]
         }
     }

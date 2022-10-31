@@ -55,7 +55,7 @@ const exceljs = require('exceljs');
 const { v4: uuidv4 } = require('uuid');
 
 @Injectable()
-export class Neo4jService implements OnApplicationShutdown {
+export class Neo4jExcelService implements OnApplicationShutdown {
   private readonly driver: Driver;
   private readonly config: Neo4jConfig;
   constructor(
