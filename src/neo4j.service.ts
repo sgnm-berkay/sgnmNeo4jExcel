@@ -53,6 +53,7 @@ import { CustomClassificationError } from "./constant/import-export.error.enum";
 import { building_already_exist_object, contact_already_exist_object, floor_already_exist_object, space_already_exist_object, space_has_already_relation_object, there_are_no_contacts_object, there_are_no_jointSpaces_object, there_are_no_spaces_object, there_are_no_system_or_component_or_both_object, there_are_no_type_or_component_or_type_id_is_wrong_object, there_are_no_zones_object } from "./constant/import-export.error.object";
 const exceljs = require('exceljs');
 const { v4: uuidv4 } = require('uuid');
+const moment= require('moment');
 
 @Injectable()
 export class Neo4jExcelService implements OnApplicationShutdown {
@@ -1536,6 +1537,11 @@ return jsonData;
 }
 
 
+// async addTypeWithCobie(file: Express.Multer.File,header:MainHeaderInterface){
+
+  
+// }
+
 ///// FACILITY
 
 async getSpacesByBuilding(realm:string,username:string,buildingKey:string,language:string){
@@ -2025,7 +2031,7 @@ async getContactByRealmAndByLanguage(res, header:UserInformationInterface){
     
     let returnData =await this.read(cypher2)
     data= returnData.records;
-    console.log(data)
+  
   if (data.length==0) {
     throw new HttpException(there_are_no_contacts_object,404)
   }else{
@@ -2053,7 +2059,7 @@ async getContactByRealmAndByLanguage(res, header:UserInformationInterface){
            ];
     
     
-           console.log(jsonData);
+          
     worksheet.addRows(jsonData);
     
     return workbook.xlsx.write(res).then(function () {
@@ -2436,7 +2442,6 @@ async addContacts(file: Express.Multer.File,header:MainHeaderInterface)  {
         error.status
       );
     }else {
-      //default_error()
       throw new HttpException(
         {code: CustomClassificationError.DEFAULT_ERROR },
         error.status
@@ -2485,5 +2490,52 @@ async getZoneFromDb(buildingKey:string,data:string[]){
 
 keyGenerate(){
   return uuidv4()
+}
+
+getValueFromRichText=async(datas:any[])=>{
+  let returningDatas:string[]=[];
+
+  for (let i = 0; i < datas.length; i++) {
+    
+      if(typeof datas[i]=='object'){
+        returningDatas.push(datas[i].text);
+
+     }else {
+       returningDatas.push(datas[i]);
+  
+    }
+    
+  }
+  return returningDatas;
+}
+
+async getSystemRelationFromDb(realm:string,data:string[],emailReference:string[]){
+
+
+  let cypher =`MATCH (a:Systems {realm:"${realm}"})-[:PARENT_OF]->(s:System {name:"${data[1]}",isDeleted:false})-[rel:CREATED_BY]->(p:Contact :Virtual) return rel;`;
+  let returnData = await this.read(cypher);
+  
+
+  if(returnData.records?.length==1){
+    return ``;
+  }else{
+    return `MERGE (cnt :Contact :Virtual {key:"${this.keyGenerate()}",referenceKey:"${emailReference[0]}",type:"createdBy",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true}) \
+    MERGE (s)-[:CREATED_BY]->(cnt) MERGE (s)-[:HAS_VIRTUAL_RELATION]->(cnt)`; 
+  }
+}
+
+async getSystemFromDb(realm:string,data:string[]){
+
+
+  let cypher =`MATCH (a:Systems {realm:"${realm}"})-[:PARENT_OF]->(n:System {name:"${data[1]}",isDeleted:false}) return n;`;
+  let returnData = await this.read(cypher);
+  
+
+  if(returnData.records?.length==1){
+    return `MATCH (s:System {key:"${returnData.records[0]["_fields"][0].properties.key}",isDeleted:false})`;
+  }else{
+    return `MERGE (s:System {name:"${data[1]}",createdAt:"${data[3]}",externalSystem:"${data[6]}",externalObject:"${data[7]}",externalIdentifier:"${data[8]}",description:"${data[9]}",images:"",documents:"",tag:[],key:"${this.keyGenerate()}",isDeleted:false,canDelete:true,isActive:"true",className:"System"}) \
+    MERGE (sys)-[:PARENT_OF]->(s)`; 
+  }
 }
 }
