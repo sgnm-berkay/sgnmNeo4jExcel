@@ -91,4 +91,9 @@ export const  there_are_no_type_or_component_or_type_id_is_wrong_object:errorObj
     code: CustomClassificationError.THERE_ARE_NO_TYPE_OR_COMPONENT_OR_TYPE_ID_IS_WRONG,
 }
 
+export const  contact_export_object:errorObject= {
+      message: 'error',
+      code: CustomClassificationError.CONTACT_EXPORT_ERROR,
+  }
+
 

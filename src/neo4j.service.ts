@@ -2425,7 +2425,7 @@ async addContacts(file: Express.Multer.File,header:MainHeaderInterface)  {
     let cypher2 = `MATCH (p:Contact {email:"${email}"}) MATCH (p2:Contact {email:"${createdByEmail}"}) MERGE (p)-[:CREATED_BY]->(p2)`
     await this.write(cypher2);
     }else{
-      throw new HttpException(contact_already_exist_object,400)
+      throw new HttpException({...contact_already_exist_object,name:email},400)
     }
   
     }
@@ -2438,7 +2438,7 @@ async addContacts(file: Express.Multer.File,header:MainHeaderInterface)  {
     // }
     if(error.response?.code){
       throw new HttpException(
-        { message: error.response?.message, code: error.response?.code },
+        { message: error.response?.message, code: error.response?.code,name: error.response?.name},
         error.status
       );
     }else {
