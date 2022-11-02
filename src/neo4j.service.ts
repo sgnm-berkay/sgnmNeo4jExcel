@@ -2410,6 +2410,7 @@ async addContacts(file: Express.Multer.File,header:MainHeaderInterface)  {
         error.status
       );
     }else {
+      console.log(error);
       throw new HttpException(
         {code: CustomClassificationError.DEFAULT_ERROR },
         error.status
