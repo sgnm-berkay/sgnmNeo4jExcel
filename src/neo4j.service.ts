@@ -1537,11 +1537,6 @@ return jsonData;
 }
 
 
-// async addTypeWithCobie(file: Express.Multer.File,header:MainHeaderInterface){
-
-  
-// }
-
 ///// FACILITY
 
 async getSpacesByBuilding(realm:string,username:string,buildingKey:string,language:string){
@@ -1606,29 +1601,29 @@ async getSpacesByBuilding(realm:string,username:string,buildingKey:string,langua
       
           for (let i = 0; i < data.value.parent_of[index].parent_of?.length; i++) {
             let spaceProperties = data.value.parent_of[index].parent_of[i];
-              jsonData.push({BuildingName:data.value.name,
-                BlockName:"-",
-                FloorName:data.value.parent_of[index].name,
-                SpaceName:spaceProperties.name,
-                Code:spaceProperties.code ? spaceProperties.code : " ",
-                ArchitecturalName:spaceProperties.architecturalName,
-                ArchitecturalCode:spaceProperties.architecturalCode  ? spaceProperties.architecturalCode : " ",
-                Category:spaceProperties.classified_by[0].name,
-                GrossArea:spaceProperties.grossArea,
-                NetArea:spaceProperties.netArea,
-                Usage:spaceProperties.usage ? spaceProperties.usage : " ",
-                Tag:spaceProperties.tag.toString(),
-                RoomTag:spaceProperties.roomTag.toString(),
-                Status:spaceProperties.status? spaceProperties.status: " ",
-                OperatorName:spaceProperties.operatorName ? spaceProperties.operatorName : " ", 
-                OperatorCode:spaceProperties.operatorCode ? spaceProperties.operatorCode : " ", 
-                Description:spaceProperties.description,
-                UsableHeight:spaceProperties.usableHeight,
-                ExternalSystem:spaceProperties.externalSystem,
-                ExternalObject:spaceProperties.externalObject,
-                ExternalIdentifier:spaceProperties.externalIdentifier,
-                CreatedOn:spaceProperties.createdOn,
-                CreatedBy:spaceProperties.created_by[0].email
+              jsonData.push({buildingName:data.value.name,
+                blockName:"-",
+                floorName:data.value.parent_of[index].name,
+                spaceName:spaceProperties.name,
+                code:spaceProperties.code ? spaceProperties.code : " ",
+                architecturalName:spaceProperties.architecturalName,
+                architecturalCode:spaceProperties.architecturalCode  ? spaceProperties.architecturalCode : " ",
+                category:spaceProperties.classified_by[0].name,
+                grossArea:spaceProperties.grossArea,
+                netArea:spaceProperties.netArea,
+                usage:spaceProperties.usage ? spaceProperties.usage : " ",
+                tag:spaceProperties.tag.toString(),
+                roomTag:spaceProperties.roomTag.toString(),
+                status:spaceProperties.status? spaceProperties.status: " ",
+                operatorName:spaceProperties.operatorName ? spaceProperties.operatorName : " ", 
+                operatorCode:spaceProperties.operatorCode ? spaceProperties.operatorCode : " ", 
+                description:spaceProperties.description,
+                usableHeight:spaceProperties.usableHeight,
+                externalSystem:spaceProperties.externalSystem,
+                externalObject:spaceProperties.externalObject,
+                externalIdentifier:spaceProperties.externalIdentifier,
+                createdOn:spaceProperties.createdOn,
+                createdBy:spaceProperties.created_by[0].email
                 })
           }
         }
@@ -1642,29 +1637,29 @@ async getSpacesByBuilding(realm:string,username:string,buildingKey:string,langua
             for (let a = 0; a < data.value.parent_of[index]?.parent_of[i]?.parent_of?.length; a++) {
               let spaceProperties = data.value.parent_of[index]?.parent_of[i]?.parent_of[a];
               
-              jsonData.push({BuildingName:data.value.name,
-                BlockName:data.value.parent_of[index].name,
-                FloorName:data.value.parent_of[index].parent_of[i].name,
-                SpaceName:data.value.parent_of[index].parent_of[i].parent_of[a].name,
-                Code:spaceProperties.code ? spaceProperties.code: " ",
-                ArchitecturalName:spaceProperties.architecturalName,
-                ArchitecturalCode:spaceProperties.architecturalCode  ? spaceProperties.architecturalCode: " ",
-                Category:spaceProperties.classified_by[0].name,
-                GrossArea:spaceProperties.grossArea,
-                NetArea:spaceProperties.netArea,
-                Usage:spaceProperties.usage ? spaceProperties.usage : " ",
-                Tag:spaceProperties.tag.toString(),
-                RoomTag:spaceProperties.roomTag.toString(),
-                Status:spaceProperties.status? spaceProperties.status: " ",
-                OperatorName:spaceProperties.operatorName ? spaceProperties.operatorName : " ", 
-                OperatorCode:spaceProperties.operatorCode ? spaceProperties.operatorCode : " ", 
-                Description:spaceProperties.description,
-                UsableHeight:spaceProperties.usableHeight,
-                ExternalSystem:spaceProperties.externalSystem,
-                ExternalObject:spaceProperties.externalObject,
-                ExternalIdentifier:spaceProperties.externalIdentifier,
-                CreatedOn:spaceProperties.createdOn,
-                CreatedBy:spaceProperties.created_by[0].email
+              jsonData.push({buildingName:data.value.name,
+                blockName:data.value.parent_of[index].name,
+                floorName:data.value.parent_of[index].parent_of[i].name,
+                spaceName:data.value.parent_of[index].parent_of[i].parent_of[a].name,
+                code:spaceProperties.code ? spaceProperties.code: " ",
+                architecturalName:spaceProperties.architecturalName,
+                architecturalCode:spaceProperties.architecturalCode  ? spaceProperties.architecturalCode: " ",
+                category:spaceProperties.classified_by[0].name,
+                grossArea:spaceProperties.grossArea,
+                netArea:spaceProperties.netArea,
+                usage:spaceProperties.usage ? spaceProperties.usage : " ",
+                tag:spaceProperties.tag.toString(),
+                roomTag:spaceProperties.roomTag.toString(),
+                status:spaceProperties.status? spaceProperties.status: " ",
+                operatorName:spaceProperties.operatorName ? spaceProperties.operatorName : " ", 
+                operatorCode:spaceProperties.operatorCode ? spaceProperties.operatorCode : " ", 
+                description:spaceProperties.description,
+                usableHeight:spaceProperties.usableHeight,
+                externalSystem:spaceProperties.externalSystem,
+                externalObject:spaceProperties.externalObject,
+                externalIdentifier:spaceProperties.externalIdentifier,
+                createdOn:spaceProperties.createdOn,
+                createdBy:spaceProperties.created_by[0].email
                 })
               
             }
@@ -1674,9 +1669,6 @@ async getSpacesByBuilding(realm:string,username:string,buildingKey:string,langua
       }
       return jsonData;
     }
-    
-   
-    
   } catch (error) {
     if(error.response?.code){
       throw new HttpException(
@@ -1684,7 +1676,6 @@ async getSpacesByBuilding(realm:string,username:string,buildingKey:string,langua
         error.status
       );
     }else {
-      //default_error()
       throw new HttpException(
         {code: CustomClassificationError.DEFAULT_ERROR },
         error.status
@@ -1723,20 +1714,21 @@ async getJointSpacesByBuilding(realm:string,username:string,buildingKey:string,l
     for (let index = 0; index < data.value.parent_of?.length; index++) {
       
       for (let i = 0; i < data.value.parent_of[index].parent_of?.length; i++) {
-        let jointSpaceProperties=data.value.parent_of[index].parent_of[i]
-        jsonData.push({BuildingName:data.value.name,
-          JointSpaceName:jointSpaceProperties.name,
-          Category:jointSpaceProperties.classified_by[0].name,
-          CreatedBy:jointSpaceProperties.created_by[0].name,
-          SpaceNames:jointSpaceProperties.jointSpaceTitle,
-          Description:jointSpaceProperties.description,
-          Tags:jointSpaceProperties.tag.toString(),
-          RoomTags:jointSpaceProperties.roomTag.toString(),
-          Status:jointSpaceProperties.status ? jointSpaceProperties.status : " ",
-          Usage :jointSpaceProperties.usage ? jointSpaceProperties.usage : " ",
-          UsableHeight:jointSpaceProperties.usableHeight ? jointSpaceProperties.usableHeight : " ",
-          GrossArea:jointSpaceProperties.grossArea ? jointSpaceProperties.grossArea : " ",
-          NetArea:jointSpaceProperties.netArea ? jointSpaceProperties.netArea : " ",
+        let jointSpaceProperties=data.value.parent_of[index].parent_of[i];
+
+        jsonData.push({buildingName:data.value.name,
+          jointSpaceName:jointSpaceProperties.name,
+          category:jointSpaceProperties.classified_by[0].name,
+          createdBy:jointSpaceProperties.created_by[0].name,
+          spaceNames:jointSpaceProperties.jointSpaceTitle,
+          description:jointSpaceProperties.description,
+          tags:jointSpaceProperties.tag.toString(),
+          roomTags:jointSpaceProperties.roomTag.toString(),
+          status:jointSpaceProperties.status ? jointSpaceProperties.status : " ",
+          usage :jointSpaceProperties.usage ? jointSpaceProperties.usage : " ",
+          usableHeight:jointSpaceProperties.usableHeight ? jointSpaceProperties.usableHeight : " ",
+          grossArea:jointSpaceProperties.grossArea ? jointSpaceProperties.grossArea : " ",
+          netArea:jointSpaceProperties.netArea ? jointSpaceProperties.netArea : " ",
 
         })
       }
@@ -1795,13 +1787,13 @@ async getZonesByBuilding(realm:string,username:string,buildingKey:string,languag
             
                 for (let i = 0; i < data.value.parent_of[index].parent_of?.length; i++) {
                   
-                  jsonData.push({BuildingName:data.value.name,
-                    ZoneName:data.value.parent_of[index].parent_of[i].name,
-                    Category:data.value.parent_of[index].parent_of[i].classified_by[0].name,
-                    CreatedBy:data.value.parent_of[index].parent_of[i].created_by[0].email,
-                    SpaceNames:data.value.parent_of[index].parent_of[i].spaceNames.toString(),
-                    Description:data.value.parent_of[index].parent_of[i].description,
-                    Tags:data.value.parent_of[index].parent_of[i].tag.toString()
+                  jsonData.push({buildingName:data.value.name,
+                    zoneName:data.value.parent_of[index].parent_of[i].name,
+                    category:data.value.parent_of[index].parent_of[i].classified_by[0].name,
+                    createdBy:data.value.parent_of[index].parent_of[i].created_by[0].email,
+                    spaceNames:data.value.parent_of[index].parent_of[i].spaceNames.toString(),
+                    description:data.value.parent_of[index].parent_of[i].description,
+                    tags:data.value.parent_of[index].parent_of[i].tag.toString()
                   
                   })
                    
@@ -1819,7 +1811,6 @@ async getZonesByBuilding(realm:string,username:string,buildingKey:string,languag
             error.status
           );
         }else {
-          //default_error()
           throw new HttpException(
             {code: CustomClassificationError.DEFAULT_ERROR },
             error.status
@@ -1849,16 +1840,30 @@ async getSpacesAnExcelFile(res, body:ExportExcelDto,header:UserInformationInterf
         let worksheet = workbook.addWorksheet("Spaces");
       
       
-        // worksheet.columns = [
-        //   { header: "System Name", key: "systemName", width: 50 },
-        //   { header: "System Description", key: "systemDescription", width: 50},
-        //   { header: "Component Name", key: "componentName", width: 50 },
-        //   { header: "Space Name", key: "spaceName", width: 50 },
-        //   { header: "Description", key: "description", width: 50 },
-        //   { header: "Serial No", key: "serialNo", width: 50 },
-        //   { header: "Warranty Duration Labor", key: "warrantyDurationLabor", width: 50 },
-        //   { header: "Warranty Duration Parts", key: "warrantyDurationParts", width: 50 },
-        //  ];
+        worksheet.columns = [
+          { header: "Building Name", key: "buildingName", width: 50 },
+          { header: "Block Name", key: "blockName", width: 50},
+          { header: "Floor Name", key: "floorName", width: 50 },
+          { header: "Space Name", key: "spaceName", width: 50 },
+          { header: "Code", key: "code", width: 50 },
+          { header: "architecturalName", key: "architecturalName", width: 50 },
+          { header: "architecturalCode", key: "architecturalCode", width: 50 },
+          { header: "grossArea", key: "grossArea", width: 50 },
+          { header: "netArea", key: "netArea", width: 50 },
+          { header: "usage", key: "usage", width: 50 },
+          { header: "tag", key: "tag", width: 50 },
+          { header: "roomTag", key: "roomTag", width: 50 },
+          { header: "status", key: "status", width: 50 },
+          { header: "operatorName", key: "operatorName", width: 50 },
+          { header: "operatorCode", key: "operatorCode", width: 50 },
+          { header: "description", key: "description", width: 50 },
+          { header: "usableHeight", key: "usableHeight", width: 50 },
+          { header: "externalSystem", key: "externalSystem", width: 50 },
+          { header: "externalObject", key: "externalObject", width: 50 },
+          { header: "externalIdentifier", key: "externalIdentifier", width: 50 },
+          { header: "createdOn", key: "createdOn", width: 50 },
+          { header: "createdBy", key: "createdBy", width: 50 }
+         ];
       
       
       worksheet.addRows(data);
@@ -1878,12 +1883,6 @@ async getSpacesAnExcelFile(res, body:ExportExcelDto,header:UserInformationInterf
         error.status
       );
     }
-    // if(error.response?.code===10010){
-    //   there_are_no_spaces()
-    // }else {
-    //   default_error()
-    // }
-
    }
          
 
@@ -1912,16 +1911,15 @@ async getZonesAnExcelFile(res, body:ExportExcelDto,header:UserInformationInterfa
     let worksheet = workbook.addWorksheet("Zones");
   
   
-    // worksheet.columns = [
-    //   { header: "System Name", key: "systemName", width: 50 },
-    //   { header: "System Description", key: "systemDescription", width: 50},
-    //   { header: "Component Name", key: "componentName", width: 50 },
-    //   { header: "Space Name", key: "spaceName", width: 50 },
-    //   { header: "Description", key: "description", width: 50 },
-    //   { header: "Serial No", key: "serialNo", width: 50 },
-    //   { header: "Warranty Duration Labor", key: "warrantyDurationLabor", width: 50 },
-    //   { header: "Warranty Duration Parts", key: "warrantyDurationParts", width: 50 },
-    //  ];
+    worksheet.columns = [
+      { header: "buildingName", key: "buildingName", width: 50 },
+      { header: "zoneName", key: "zoneName", width: 50},
+      { header: "category", key: "category", width: 50 },
+      { header: "createdBy", key: "createdBy", width: 50 },
+      { header: "spaceNames", key: "spaceNames", width: 50 },
+      { header: "Code", key: "description", width: 50 },
+      { header: "tags", key: "tags", width: 50 }
+     ];
   
   
   worksheet.addRows(data);
@@ -1972,17 +1970,22 @@ async getJointSpacesAnExcelFile(res, body:ExportExcelDto,header:UserInformationI
     let workbook = new exceljs.Workbook();
     let worksheet = workbook.addWorksheet("JointSpaces");
   
-  
-    // worksheet.columns = [
-    //   { header: "System Name", key: "systemName", width: 50 },
-    //   { header: "System Description", key: "systemDescription", width: 50},
-    //   { header: "Component Name", key: "componentName", width: 50 },
-    //   { header: "Space Name", key: "spaceName", width: 50 },
-    //   { header: "Description", key: "description", width: 50 },
-    //   { header: "Serial No", key: "serialNo", width: 50 },
-    //   { header: "Warranty Duration Labor", key: "warrantyDurationLabor", width: 50 },
-    //   { header: "Warranty Duration Parts", key: "warrantyDurationParts", width: 50 },
-    //  ];
+
+
+    worksheet.columns = [
+      { header: "buildingName", key: "buildingName", width: 50 },
+      { header: "jointSpaceName", key: "jointSpaceName", width: 50},
+      { header: "category", key: "category", width: 50 },
+      { header: "createdBy", key: "createdBy", width: 50 },
+      { header: "description", key: "description", width: 50 },
+      { header: "tags", key: "tags", width: 50 },
+      { header: "roomTags", key: "roomTags", width: 50 },
+      { header: "status", key: "status", width: 50 },
+      { header: "usage", key: "usage", width: 50 },
+      { header: "usableHeight", key: "usableHeight", width: 50 },
+      { header: "grossArea", key: "grossArea", width: 50 },
+      { header: "netArea", key: "netArea", width: 50 },
+     ];
   
   
   worksheet.addRows(data);
@@ -2002,12 +2005,6 @@ async getJointSpacesAnExcelFile(res, body:ExportExcelDto,header:UserInformationI
         error.status
       );
     }
-    // if(error.response?.code===10011){
-    //   there_are_no_jointSpaces()
-    // }else {
-    //   default_error()
-    // }
-
    }
        
 
@@ -2146,11 +2143,6 @@ async addBuildingWithCobie(file: Express.Multer.File,header:MainHeaderInterface)
         error.status
       );
     }
-  //  if(error.response?.code===10003){
-  //    building_already_exist()
-  //  }else {
-  //    default_error()
-  //  }
   }
    
  }
@@ -2200,28 +2192,23 @@ async addFloorsToBuilding(file: Express.Multer.File, header:MainHeaderInterface,
     await this.write(cypher);
 
      }else {
-       throw new HttpException(floor_already_exist_object,400)
+       throw new HttpException({...floor_already_exist_object,name:data[i][1]},400)
      }
 
    }
  } catch (error) {
   if(error.response?.code){
     throw new HttpException(
-      { message: error.response?.message, code: error.response?.code },
+      { message: error.response?.message, code: error.response?.code ,name:error.response?.name},
       error.status
     );
   }else {
-    //default_error()
     throw new HttpException(
       {code: CustomClassificationError.DEFAULT_ERROR },
       error.status
     );
   }
-  //  if(error.response?.code===10004){
-  //    floor_already_exist(error.response?.name)
-  //  }else {
-  //    default_error()
-  //  }
+
   }
 
 
@@ -2270,7 +2257,7 @@ async addSpacesToBuilding(file: Express.Multer.File, header:MainHeaderInterface,
        await this.write(cypher);
 
      }else{
-       throw new HttpException(space_already_exist_object,400) 
+       throw new HttpException({...space_already_exist_object,name:data[i][1]},400) 
      }
 
   
@@ -2279,21 +2266,15 @@ async addSpacesToBuilding(file: Express.Multer.File, header:MainHeaderInterface,
  } catch (error) {
   if(error.response?.code){
     throw new HttpException(
-      { message: error.response?.message, code: error.response?.code },
+      { message: error.response?.message, code: error.response?.code,name: error.response?.name},
       error.status
     );
   }else {
-    //default_error()
     throw new HttpException(
       {code: CustomClassificationError.DEFAULT_ERROR },
       error.status
     );
   }
-  //  if(error.response?.code===10005){
-  //    space_already_exist(error.response?.name)
-  //  }else {
-  //    default_error()
-  //  }
   }
 
   
@@ -2345,7 +2326,7 @@ async addZonesToBuilding(file: Express.Multer.File,header:MainHeaderInterface, b
 
     await this.write(cypher)
    }else {
-     throw new HttpException(space_has_already_relation_object,400)
+     throw new HttpException({...space_has_already_relation_object,name:data[i][1]},400)
     }
 
    
@@ -2354,7 +2335,7 @@ async addZonesToBuilding(file: Express.Multer.File,header:MainHeaderInterface, b
  } catch (error) {
   if(error.response?.code){
     throw new HttpException(
-      { message: error.response?.message, code: error.response?.code },
+      { message: error.response?.message, code: error.response?.code ,name: error.response?.name},
       error.status
     );
   }else {
@@ -2364,14 +2345,6 @@ async addZonesToBuilding(file: Express.Multer.File,header:MainHeaderInterface, b
       error.status
     );
   }
-  //  if(error.response?.code===10006){
-  //    zone_already_exist(error.response?.name)
-  //  }else if(error.response?.code===10009){
-  //    space_has_already_relation()
-  //  }
-  //  else {
-  //    default_error()
-  //  }
   }
 
 }
@@ -2431,11 +2404,6 @@ async addContacts(file: Express.Multer.File,header:MainHeaderInterface)  {
     }
    
   } catch (error) {
-    // if(error.response?.code===10007){
-    //   contact_already_exist(error.response?.name)
-    // }else {
-    //   default_error()
-    // }
     if(error.response?.code){
       throw new HttpException(
         { message: error.response?.message, code: error.response?.code,name: error.response?.name},
@@ -2453,8 +2421,6 @@ async addContacts(file: Express.Multer.File,header:MainHeaderInterface)  {
 };
 
 
-
-/// excel common functions
 async createCypherForClassification(realm:string,classificationLabel:string,categoryCode:string,nodeName:string,classificationParentPlaceholder:string,classificationChildrenPlaceholder:string,relationName:string){
     let createCypherArray=[];
     let createRelationCypher=[];
