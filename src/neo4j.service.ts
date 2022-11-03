@@ -2527,11 +2527,11 @@ try {
 }
 
 
-async getPropsOfSpace(headers:MainHeaderInterface,locationCode:string,key:string){
+async getPropsOfSpace(headers:MainHeaderInterface,locationCode:string,buildingKey:string){
 try {
   let {realm}= headers;
 
-  let cypher =`MATCH (n:FacilityStructure {realm:"${realm}"})-[:PARENT_OF]->(b:Building {key:"${key}"})-[:PARENT_OF*]->(s:Space {locationCode:"${locationCode}",isDeleted:false}) return s`
+  let cypher =`MATCH (n:FacilityStructure {realm:"${realm}"})-[:PARENT_OF]->(b:Building {key:"${buildingKey}"})-[:PARENT_OF*]->(s:Space {locationCode:"${locationCode}",isDeleted:false}) return s`
 
   let data = await this.read(cypher);
   return data.records[0]["_fields"][0].properties.key;
