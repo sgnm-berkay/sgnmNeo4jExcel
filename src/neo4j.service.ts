@@ -2512,7 +2512,6 @@ async getSystemFromDb(realm:string,data:string[]){
 
 ///// HTTP REQUESTS
 
-//@Get('getProps/:email')
 async getPropsOfContact(email:string,headers: MainHeaderInterface){
 try {
   let {realm}= headers;
