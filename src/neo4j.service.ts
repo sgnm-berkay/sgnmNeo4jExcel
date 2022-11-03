@@ -2455,6 +2455,8 @@ async getZoneFromDb(buildingKey:string,data:string[]){
   }
 }
 
+
+///// COMMON FUNCTIONS
 keyGenerate(){
   return uuidv4()
 }
@@ -2504,5 +2506,42 @@ async getSystemFromDb(realm:string,data:string[]){
     return `MERGE (s:System {name:"${data[1]}",createdAt:"${data[3]}",externalSystem:"${data[6]}",externalObject:"${data[7]}",externalIdentifier:"${data[8]}",description:"${data[9]}",images:"",documents:"",tag:[],key:"${this.keyGenerate()}",isDeleted:false,canDelete:true,isActive:"true",className:"System"}) \
     MERGE (sys)-[:PARENT_OF]->(s)`; 
   }
+}
+
+
+
+///// HTTP REQUESTS
+
+//@Get('getProps/:email')
+async getPropsOfContact(email:string,headers: MainHeaderInterface){
+try {
+  let {realm}= headers;
+
+  let cypher =`MATCH (n:Contacts {realm:"${realm}"})-[:PARENT_OF]->(p:Contact {email:"${email}",isDeleted:false}) return p`
+
+  let data = await this.read(cypher);
+  return data.records[0]["_fields"][0].properties.key;
+} catch (error) {
+  console.log(error)
+}
+  
+}
+
+
+//@Get('getProps/space/:locationCode/:key')
+async getPropsOfSpace(headers:MainHeaderInterface,locationCode:string,key:string){
+try {
+  let {realm}= headers;
+
+  let cypher =`MATCH (n:FacilityStructure {realm:"${realm}"})-[:PARENT_OF]->(b:Building {key:"${key}"})-[:PARENT_OF*]->(s:Space {locationCode:"${locationCode}",isDeleted:false}) return s`
+
+  let data = await this.read(cypher);
+  return data.records[0]["_fields"][0].properties.key;
+} catch (error) {
+  console.log(error);
+  
+}
+ 
+  
 }
 }
