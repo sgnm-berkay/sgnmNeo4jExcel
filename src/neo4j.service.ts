@@ -2527,7 +2527,6 @@ try {
 }
 
 
-//@Get('getProps/space/:locationCode/:key')
 async getPropsOfSpace(headers:MainHeaderInterface,locationCode:string,key:string){
 try {
   let {realm}= headers;
