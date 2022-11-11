@@ -96,4 +96,8 @@ export const  contact_export_object:errorObject= {
       code: CustomClassificationError.CONTACT_EXPORT_ERROR,
   }
 
+  export const  there_is_no_type_object:errorObject= {
+      message: 'error',
+      code: CustomClassificationError.THERE_IS_NO_TYPE,
+  }
 
