@@ -5,4 +5,5 @@
 
 # sgnmNeo4jExcel
 
-This Package includes some special functions for a project.
+- This Package includes some special functions for a project.
+- Some functions will be dynamic in future
