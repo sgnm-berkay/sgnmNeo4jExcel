@@ -1652,7 +1652,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           }",postalCode:"${data[i][18]}",country:"${
             data[i][19]
           }",canDisplay:true,isDeleted:false,isActive:true,className:"Contact",key:"${this.keyGenerate()}",canDelete:true} )\
-      MERGE (c)-[:PARENT_OF {isDeleted:false}]->(p)  ${createdRelationCypher}`;
+      MERGE (c)-[a:PARENT_OF]->(p)  ${createdRelationCypher} set a.isDeleted=false`;
           await this.write(cypher);
 
           let cypher2 = `MATCH (p:Contact {email:"${email}"}) MATCH (p2:Contact {email:"${createdByEmail}"}) MERGE (p)-[:CREATED_BY {isDeleted:false}]->(p2)`;
@@ -1698,13 +1698,13 @@ export class Neo4jExcelService implements OnApplicationShutdown {
     try {
       let createCypherArray = [];
       let createRelationCypher = [];
-      let cypher = `MATCH (a:Language_Config {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(z) return z`;
+      let cypher = `MATCH (a:Language_Config {realm:"${realm}"})-[:PARENT_OF]->(z) return z`;
       let value = await this.read(cypher);
       let datasLenght = value.records;
   
       for (let index = 0; index < datasLenght.length; index++) {
         let createdCypher = ` MATCH (${classificationParentPlaceholder}${index}:${classificationLabel}_${datasLenght[index]["_fields"][0].properties.name} {realm:"${realm}"})-[:PARENT_OF* {isDeleted:false}]->(${classificationChildrenPlaceholder}${index} {code:"${categoryCode}",language:"${datasLenght[index]["_fields"][0].properties.name}"})`;
-        let createdRelationCypher = `MERGE (${nodeName})-[:${relationName} {isDeleted:false}]->(${classificationChildrenPlaceholder}${index})`;
+        let createdRelationCypher = `MERGE (${nodeName})-[x:${relationName}]->(${classificationChildrenPlaceholder}${index}) set x.isDeleted=false`;
         createCypherArray.push(createdCypher);
         createRelationCypher.push(createdRelationCypher);
       }
