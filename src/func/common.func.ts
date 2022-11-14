@@ -245,16 +245,20 @@ export function dynamicUpdatePropertyAdderAndAddParameterKey(
 
 export function dynamicFilterPropertiesAdderAndAddParameterKey(
   filterProperties,
-  parameterKey: string = "1"
+  filterPropertiesType: FilterPropertiesType = FilterPropertiesType.NODE,
+  parameterKey = "1"
 ) {
-  if (!filterProperties || Object.keys(filterProperties).length === 0) {
+  if (
+    (!filterProperties || Object.keys(filterProperties).length === 0) &&
+    filterPropertiesType === FilterPropertiesType.NODE
+  ) {
     return ")";
   }
   let dynamicQueryParameter = "";
 
   Object.entries(filterProperties).forEach((element, index) => {
     if (element[1] === null || element[1] === undefined) {
-      throw new HttpException(undefined_value_recieved, 400);
+      throw new HttpException("undefined_value_recieved", 400);
     }
     if (index === 0) {
       dynamicQueryParameter +=
@@ -264,7 +268,11 @@ export function dynamicFilterPropertiesAdderAndAddParameterKey(
         `,${element[0]}` + `: $` + `${element[0]}` + parameterKey;
     }
     if (Object.keys(filterProperties).length === index + 1) {
-      dynamicQueryParameter += ` })`;
+      if (filterPropertiesType === FilterPropertiesType.NODE) {
+        dynamicQueryParameter += ` })`;
+      } else {
+        dynamicQueryParameter += ` }`;
+      }
     }
   });
   return dynamicQueryParameter;
