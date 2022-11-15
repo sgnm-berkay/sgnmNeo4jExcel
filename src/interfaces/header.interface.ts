@@ -1,10 +1,13 @@
 export interface MainHeaderInterface {
-    realm:string;
-  }
+  realm: string;
+}
 export interface HeaderInterface extends MainHeaderInterface {
-    language: string;
-    
-  }
-export interface UserInformationInterface extends HeaderInterface{
-    username:string;
-  }
+  language: string;
+}
+export interface UserInformationInterface extends HeaderInterface {
+  username: string;
+}
+
+export interface MainHeaderInterfaceWithToken extends MainHeaderInterface {
+  token: string;
+}
