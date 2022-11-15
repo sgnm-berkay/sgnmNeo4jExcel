@@ -1882,9 +1882,9 @@ async createComponent(realm:string,data:string[],warrantyGuarantorPartsReference
       let cypher = `MATCH (n:Contacts {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(p:Contact {email:"${email}",isDeleted:false}) return p`;
 console.log(cypher)
       let data = await this.read(cypher);
-      console.log(data)
       console.log(data.records[0]["_fields"][0].properties.key)
-      return data.records[0]["_fields"][0].properties.key;
+      let abc =data.records[0]["_fields"][0].properties.key;
+      return abc;
     } catch (error) {
       throw new HttpException(
         {
