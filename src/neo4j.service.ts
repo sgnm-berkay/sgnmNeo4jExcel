@@ -1815,13 +1815,14 @@ export class Neo4jExcelService implements OnApplicationShutdown {
 
 async componentAlreadyExist(realm:string,data:string[]){
      let cypher = `MATCH (n:Types {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(t:Type {name:"${data[4]}",isDeleted:false}) \ 
-       MATCH (t)-[:PARENT_OF {isDeleted:false}]->(c:Component {name:"${data[1]}",isDeleted:false}) return c`;
-       let returnData = await this.read(cypher);
+      MATCH (t)-[:PARENT_OF {isDeleted:false}]->(c:Component {name:"${data[1]}",isDeleted:false}) return c`;
+      let returnData = await this.read(cypher);
     return returnData.records;
 }
 
 async createComponent(realm:string,data:string[],warrantyGuarantorPartsReferenceKey:string,warrantyGuarantorLaborReferenceKey:string,warrantyDurationLabor:string,warrantyDurationParts:string,spaceAndCreatedByArray:string[]){
-  let cypher =`MATCH (tt:Types {realm:"${realm}"})-[:PARENT_OF]->(t:Type {name:"${data[4]}",isDeleted:false}) \
+ 
+  let cypher =`MATCH (tt:Types {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(t:Type {name:"${data[4]}",isDeleted:false}) \
   MERGE (c:Component {className:"Component",name:"${data[1]}",createdAt:"${data[3]}",description:"${data[6]}",externalSystem:"${data[7]}",externalObject:"${data[8]}", \
   externalIdentifier:"${data[9]}",serialNumber:"${data[10]}",installationDate:"${data[11]}",warrantyStartDate:"${data[12]}",tagNumber:"${data[13]}", \
   barCode:"${data[14]}",assetIdentifier:"${data[15]}",key:"${this.keyGenerate()}",warrantyDurationLabor:${warrantyDurationLabor},warrantyDurationParts:${warrantyDurationParts},warrantyDurationUnit:"",tag:[],spaceNames:[],isDeleted:false,canDelete:true,isActive:true}) \
@@ -1834,10 +1835,10 @@ async createComponent(realm:string,data:string[],warrantyGuarantorPartsReference
   MERGE (spc :Structure :Virtual {key:"${this.keyGenerate()}",referenceKey:"${spaceAndCreatedByArray[1]}",type:"space",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true}) \
   SET spc+={url:"http://localhost:3010/structure/"+spc.key}  \
   MERGE (t)-[:PARENT_OF]->(c) \
-  MERGE (c)-[:HAS_VIRTUAL_RELATION]->(wgp) MERGE (c)-[:WARRANTY_GUARANTOR_PARTS_BY]->(wgp) \
-  MERGE (c)-[:HAS_VIRTUAL_RELATION]->(wgl) MERGE (c)-[:WARRANTY_GUARANTOR_LABOR_BY]->(wgl) \
-  MERGE (c)-[:HAS_VIRTUAL_RELATION]->(cnt) MERGE (c)-[:CREATED_BY]->(cnt) \
-  MERGE (c)-[:HAS_VIRTUAL_RELATION]->(spc) MERGE (c)-[:LOCATED_IN]->(spc);`
+  MERGE (c)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(wgp) MERGE (c)-[:WARRANTY_GUARANTOR_PARTS_BY {isDeleted:false}]->(wgp) \
+  MERGE (c)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(wgl) MERGE (c)-[:WARRANTY_GUARANTOR_LABOR_BY {isDeleted:false}]->(wgl) \
+  MERGE (c)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(cnt) MERGE (c)-[:CREATED_BY {isDeleted:false}]->(cnt) \
+  MERGE (c)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(spc) MERGE (c)-[:LOCATED_IN {isDeleted:false}]->(spc);`
 
       await this.write(cypher);
 
