@@ -9,5 +9,5 @@ export interface UserInformationInterface extends HeaderInterface {
 }
 
 export interface MainHeaderInterfaceWithToken extends MainHeaderInterface {
-  token: string;
+  authorization: string;
 }
