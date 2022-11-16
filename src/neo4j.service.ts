@@ -1897,9 +1897,9 @@ console.log(cypher)
   }
 
   async getPropsOfSpace(
-    headers: MainHeaderInterface,
     locationCode: string,
-    buildingKey: string
+    buildingKey: string,
+    headers: MainHeaderInterface
   ) {
     try {
       let { realm } = headers;
