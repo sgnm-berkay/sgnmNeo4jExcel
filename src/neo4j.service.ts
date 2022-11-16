@@ -1834,7 +1834,7 @@ async createComponent(realm:string,data:string[],warrantyGuarantorPartsReference
   SET cnt+={url:"http://localhost:3010/contact/"+cnt.key}  \
   MERGE (spc :Structure :Virtual {key:"${this.keyGenerate()}",referenceKey:"${spaceAndCreatedByArray[1]['key']}",type:"space",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true}) \
   SET spc+={url:"http://localhost:3010/structure/"+spc.key}  \
-  MERGE (t)-[:PARENT_OF]->(c) \
+  MERGE (t)-[:PARENT_OF {isDeleted:false}]->(c) \
   MERGE (c)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(wgp) MERGE (c)-[:WARRANTY_GUARANTOR_PARTS_BY {isDeleted:false}]->(wgp) \
   MERGE (c)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(wgl) MERGE (c)-[:WARRANTY_GUARANTOR_LABOR_BY {isDeleted:false}]->(wgl) \
   MERGE (c)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(cnt) MERGE (c)-[:CREATED_BY {isDeleted:false}]->(cnt) \
