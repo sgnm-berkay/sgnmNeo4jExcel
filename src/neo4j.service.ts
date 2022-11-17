@@ -1798,7 +1798,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           emailReference[0]
         }",type:"createdBy",isDeleted:false,createdAt:"${moment().format(
           "YYYY-MM-DD HH:mm:ss"
-        )}",canDelete:true}) \
+        )}",canDelete:true ,url:"http://localhost:3010/contact/${emailReference[0]}"}) \\
       MERGE (s)-[:CREATED_BY {isDeleted:false}]->(cnt) MERGE (s)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(cnt)`;
       }
     } catch (error) {
