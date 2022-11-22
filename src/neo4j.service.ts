@@ -592,7 +592,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       let data: any;
       let jsonData = [];
       let buildingType = [];
-      let cypher = `WITH 'MATCH (c:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b {key:"${buildingKey}",isDeleted:false}) MATCH path = (b)-[:PARENT_OF* {isDeleted:false}]->(m)-[:CLASSIFIED_BY|:CREATED_BY {isDeleted:false}]->(z) where  (z.language="${language}" or not exists(z.language)) and m.isDeleted=false  and not (m:JointSpaces OR m:JointSpace OR m:Zones or m:Zone) 
+      let cypher = `WITH 'MATCH (c:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b {key:"${buildingKey}",isDeleted:false}) MATCH path = (b)-[:PARENT_OF* {isDeleted:false}]->(m)-[:CLASSIFIED_BY| CREATED_BY {isDeleted:false}]->(z) where  (z.language="${language}" or not exists(z.language)) and m.isDeleted=false  and not (m:JointSpaces OR m:JointSpace OR m:Zones or m:Zone) 
     WITH collect(path) AS paths
     CALL apoc.convert.toTree(paths)
     YIELD value
