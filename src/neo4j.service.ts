@@ -239,7 +239,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
     try {
       let data: any;
       let jsonData = [];
-      let cypher = `WITH 'MATCH (c:Asset {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Types) MATCH path = (b)-[:PARENT_OF {isDeleted:false}]->(m:Type {key:"${typeKey}"})-[:CLASSIFIED_BY|:ASSET_TYPE_BY|:DURATION_UNIT_BY|:TYPE_CLASSIFIED_BY|:BRAND_BY {isDeleted:false}]->(z) where  z.language="${language}" and m.isDeleted=false  and not (m:Component) 
+      let cypher = `WITH 'MATCH (c:Asset {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Types) MATCH path = (b)-[:PARENT_OF {isDeleted:false}]->(m:Type {key:"${typeKey}"})-[:CLASSIFIED_BY| ASSET_TYPE_BY| DURATION_UNIT_BY| TYPE_CLASSIFIED_BY| BRAND_BY {isDeleted:false}]->(z) where  z.language="${language}" and m.isDeleted=false  and not (m:Component) 
     WITH collect(path) AS paths
     CALL apoc.convert.toTree(paths)
     YIELD value
@@ -783,7 +783,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
     try {
       let data: any;
       let jsonData = [];
-      let cypher = `WITH 'MATCH (c:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b {key:"${buildingKey}",isDeleted:false}) MATCH path = (b)-[:PARENT_OF* {isDeleted:false}]->(m)-[:CLASSIFIED_BY|:CREATED_BY {isDeleted:false}]->(z) where  (z.language="${language}" or not exists(z.language)) and m.isDeleted=false  and not (m:Space OR m:Zone OR m:Zones OR m:Floor OR m:Block)
+      let cypher = `WITH 'MATCH (c:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b {key:"${buildingKey}",isDeleted:false}) MATCH path = (b)-[:PARENT_OF* {isDeleted:false}]->(m)-[:CLASSIFIED_BY| CREATED_BY {isDeleted:false}]->(z) where  (z.language="${language}" or not exists(z.language)) and m.isDeleted=false  and not (m:Space OR m:Zone OR m:Zones OR m:Floor OR m:Block)
     WITH collect(path) AS paths
     CALL apoc.convert.toTree(paths)
     YIELD value
@@ -867,7 +867,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
     try {
       let data: any;
       let jsonData = [];
-      let cypher = `WITH 'MATCH (c:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b {key:"${buildingKey}",isDeleted:false}) MATCH path = (b)-[:PARENT_OF* {isDeleted:false}]->(m)-[:CREATED_BY|:CLASSIFIED_BY {isDeleted:false}]->(z) where (z.language="${language}" or not exists(z.language)) and m.isDeleted=false  and not (m:Space OR m:JointSpaces OR m:JointSpace OR m:Floor OR m:Block)
+      let cypher = `WITH 'MATCH (c:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b {key:"${buildingKey}",isDeleted:false}) MATCH path = (b)-[:PARENT_OF* {isDeleted:false}]->(m)-[:CREATED_BY| CLASSIFIED_BY {isDeleted:false}]->(z) where (z.language="${language}" or not exists(z.language)) and m.isDeleted=false  and not (m:Space OR m:JointSpaces OR m:JointSpace OR m:Floor OR m:Block)
         WITH collect(path) AS paths
         CALL apoc.convert.toTree(paths)
         YIELD value
