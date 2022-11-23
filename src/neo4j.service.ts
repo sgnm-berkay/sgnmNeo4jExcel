@@ -1881,7 +1881,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       let { realm } = headers;
       let cypher = `MATCH (n:Contacts {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(p:Contact {email:"${email}",isDeleted:false}) return p`;
       let data = await this.read(cypher);
-      let result ={key:data.records[0]["_fields"][0].properties.key,id:data.records[0]["_fields"][0].identifier.low};
+      let result ={key:data.records[0]["_fields"][0].properties.key,id:data.records[0]["_fields"][0].identity.low};
       return result;
     } catch (error) {
       throw new HttpException(
