@@ -1785,7 +1785,8 @@ export class Neo4jExcelService implements OnApplicationShutdown {
   async getSystemRelationFromDb(
     realm: string,
     data: string[],
-    emailReference: string[]
+    emailReference: string[],
+    urlContact: string
   ) {
     try {
       let cypher = `MATCH (a:Systems {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(s:System {name:"${data[1]}",isDeleted:false})-[rel:CREATED_BY {isDeleted:false}]->(p:Contact :Virtual) return rel;`;
@@ -1798,7 +1799,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           emailReference[0]
         }",type:"createdBy",isDeleted:false,createdAt:"${moment().format(
           "YYYY-MM-DD HH:mm:ss"
-        )}",canDelete:true ,url:"http://localhost:3010/contact/${emailReference[0]}"}) \\
+        )}",canDelete:true ,url:"${urlContact}/${emailReference[0]['id']}"}) \\
       MERGE (s)-[:CREATED_BY {isDeleted:false}]->(cnt) MERGE (s)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(cnt)`;
       }
     } catch (error) {
@@ -1813,27 +1814,27 @@ export class Neo4jExcelService implements OnApplicationShutdown {
   
   }
 
-async componentAlreadyExist(realm:string,data:string[]){
+  async componentAlreadyExist(realm:string,data:string[]){
      let cypher = `MATCH (n:Types {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(t:Type {name:"${data[4]}",isDeleted:false}) \ 
       MATCH (t)-[:PARENT_OF {isDeleted:false}]->(c:Component {name:"${data[1]}",isDeleted:false}) return c`;
       let returnData = await this.read(cypher);
     return returnData.records;
 }
 
-async createComponent(realm:string,data:string[],warrantyGuarantorPartsReferenceKey:string,warrantyGuarantorLaborReferenceKey:string,warrantyDurationLabor:string,warrantyDurationParts:string,spaceAndCreatedByArray:string[]){
+  async createComponent(realm:string,data:string[],warrantyGuarantorPartsReferenceKey:string,warrantyGuarantorLaborReferenceKey:string,warrantyDurationLabor:string,warrantyDurationParts:string,spaceAndCreatedByArray:string[],urlContact:string,urlStructure:string){
  
   let cypher =`MATCH (tt:Types {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(t:Type {name:"${data[4]}",isDeleted:false}) \
   MERGE (c:Component {className:"Component",name:"${data[1]}",createdAt:"${data[3]}",description:"${data[6]}",externalSystem:"${data[7]}",externalObject:"${data[8]}", \
   externalIdentifier:"${data[9]}",serialNumber:"${data[10]}",installationDate:"${data[11]}",warrantyStartDate:"${data[12]}",tagNumber:"${data[13]}", \
   barCode:"${data[14]}",assetIdentifier:"${data[15]}",key:"${this.keyGenerate()}",warrantyDurationLabor:${warrantyDurationLabor},warrantyDurationParts:${warrantyDurationParts},warrantyDurationUnit:"",tag:[],spaceName:"${spaceAndCreatedByArray[1]['name']}",isDeleted:false,canDelete:true,isActive:true}) \
   MERGE (wgp :Contact :Virtual {key:"${this.keyGenerate()}",referenceKey:"${warrantyGuarantorPartsReferenceKey}",type:"warrantyGuarantorParts",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true}) \
-  SET wgp+={url:"http://localhost:3010/contact/"+wgp.key}  \
+  SET wgp+={url:"${urlContact}/"+Id(wgp)}  \
   MERGE (wgl :Contact :Virtual {key:"${this.keyGenerate()}",referenceKey:"${warrantyGuarantorLaborReferenceKey}",type:"warrantyGuarantorLabor",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true}) \
-  SET wgl+={url:"http://localhost:3010/contact/"+wgl.key}  \
+  SET wgl+={url:"${urlContact}/"+Id(wgl)}  \
   MERGE (cnt :Contact :Virtual {key:"${this.keyGenerate()}",referenceKey:"${spaceAndCreatedByArray[0]}",type:"createdBy",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true}) \
-  SET cnt+={url:"http://localhost:3010/contact/"+cnt.key}  \
+  SET cnt+={url:"${urlContact}/"+Id(cnt)}  \
   MERGE (spc :Structure :Virtual {key:"${this.keyGenerate()}",referenceKey:"${spaceAndCreatedByArray[1]['key']}",type:"space",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true}) \
-  SET spc+={url:"http://localhost:3010/structure/"+spc.key}  \
+  SET spc+={url:"${urlStructure}/"+spc.key}  \
   MERGE (t)-[:PARENT_OF {isDeleted:false}]->(c) \
   MERGE (c)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(wgp) MERGE (c)-[:WARRANTY_GUARANTOR_PARTS_BY {isDeleted:false}]->(wgp) \
   MERGE (c)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(wgl) MERGE (c)-[:WARRANTY_GUARANTOR_LABOR_BY {isDeleted:false}]->(wgl) \
@@ -1878,13 +1879,10 @@ async createComponent(realm:string,data:string[],warrantyGuarantorPartsReference
   async getPropsOfContact(email: string, headers: MainHeaderInterface) {
     try {
       let { realm } = headers;
-
       let cypher = `MATCH (n:Contacts {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(p:Contact {email:"${email}",isDeleted:false}) return p`;
-console.log(cypher)
       let data = await this.read(cypher);
-      console.log(data.records[0]["_fields"][0].properties.key)
-      let abc =data.records[0]["_fields"][0].properties.key;
-      return abc;
+      let result ={key:data.records[0]["_fields"][0].properties.key,id:data.records[0]["_fields"][0].identifier.low};
+      return result;
     } catch (error) {
       throw new HttpException(
         {
