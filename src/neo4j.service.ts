@@ -1635,7 +1635,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
         );
         if (checkEmail.length == 0) {
           let cypher = `MATCH (c:Contacts {realm:"${realm}"}) ${createdCypher} \
-      MERGE (p:Contact {email:"${email}",createdOn:"${data[i][3]}",company:"${
+      MERGE (p:Contact {email:"${email}",createdAt:"${data[i][3]}",company:"${
             data[i][5]
           }", phone:"${data[i][6]}",externalSystem:"${
             data[i][7]
