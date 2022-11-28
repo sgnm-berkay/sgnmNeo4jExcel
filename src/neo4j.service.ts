@@ -1872,6 +1872,26 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       );
     }
 }
+
+  async hasParentType(realm: string,data: string[]){
+    try {
+
+      let cypher = `MATCH (s:Systems {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(t:Type {name:"${data[3]}"})-[:PARENT_OF {isDeleted:false}]->(n:System {name:"${data[3]}",isDeleted:false})-[:PARENT_OF {isDeleted:false}]->(m:System {name:"${data[1]}",isDeleted:false}) return m;`;
+      let returnData = await this.read(cypher);
+
+
+
+
+    } catch (error) {
+      throw new HttpException(
+        {
+          code: CustomClassificationError.DEFAULT_ERROR,
+          message: error.message,
+        },
+        error.status
+      );
+    }
+  }
   ///// HTTP REQUESTS
 
   async getPropsOfContact(email: string, headers: MainHeaderInterface) {
@@ -1903,7 +1923,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       let cypher = `MATCH (n:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Building {key:"${buildingKey}"})-[:PARENT_OF* {isDeleted:false}]->(s:Space {locationCode:"${locationCode}",isDeleted:false}) return s`;
 
       let data = await this.read(cypher);
-      return {key:data.records[0]["_fields"][0].properties.key,name:data.records[0]["_fields"][0].properties.name};
+      return {id:data.records[0]['_fields'].identity.low,key:data.records[0]["_fields"][0].properties.key,name:data.records[0]["_fields"][0].properties.name};
     } catch (error) {
       throw new HttpException(
         {
