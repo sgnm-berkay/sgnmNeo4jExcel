@@ -697,7 +697,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
                 externalSystem: spaceProperties.externalSystem,
                 externalObject: spaceProperties.externalObject,
                 externalIdentifier: spaceProperties.externalIdentifier,
-                createdOn: spaceProperties.createdOn,
+                createdAt: spaceProperties.createdAt,
                 createdBy: spaceProperties.created_by[0].email,
               });
             }
@@ -747,7 +747,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
                   externalSystem: spaceProperties.externalSystem,
                   externalObject: spaceProperties.externalObject,
                   externalIdentifier: spaceProperties.externalIdentifier,
-                  createdOn: spaceProperties.createdOn,
+                  createdAt: spaceProperties.createdAt,
                   createdBy: spaceProperties.created_by[0].email,
                 });
               }
@@ -978,7 +978,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
         { header: "externalSystem", key: "externalSystem", width: 50 },
         { header: "externalObject", key: "externalObject", width: 50 },
         { header: "externalIdentifier", key: "externalIdentifier", width: 50 },
-        { header: "createdOn", key: "createdOn", width: 50 },
+        { header: "createdAt", key: "createdAt", width: 50 },
         { header: "createdBy", key: "createdBy", width: 50 },
       ];
 
@@ -1256,7 +1256,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
 
         let cypher = `MATCH (r:FacilityStructure {realm:"${realm}"}) ${createdCypher} \
   MATCH (cnt:Contacts {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(p:Contact {email:"${email}",isDeleted:false} ) \
-  MERGE (b:Building {name:"${data[1][1]}",createdOn:"${
+  MERGE (b:Building {name:"${data[1][1]}",createdAt:"${
           data[1][3]
         }",projectName:"${data[1][5]}",siteName:"${
           data[1][6]
@@ -1358,7 +1358,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
                      data[i][1]
                    }",isDeleted:false,isActive:true,nodeType:"Floor",description:"${
             data[i][8]
-          }",tag:[],canDelete:true,canDisplay:true,key:"${this.keyGenerate()}",createdOn:"${
+          }",tag:[],canDelete:true,canDisplay:true,key:"${this.keyGenerate()}",createdAt:"${
             data[i][3]
           }",elevation:"${data[i][9]}",height:"${
             data[i][10]
@@ -1454,7 +1454,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           data[i][1]
         }",architecturalCode:"${data[i][4]}",architecturalName:"${
             data[i][2]
-          }",locationCode:"${data[i][5]}",createdOn:"${
+          }",locationCode:"${data[i][5]}",createdAt:"${
             data[i][7]
           }",description:"${
             data[i][10]
@@ -1731,7 +1731,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
     if (returnData.records?.length == 1) {
       return `Match (zz:Zone {key:"${returnData.records[0]["_fields"][0].properties.key}",isDeleted:false}) SET zz.spaceNames = zz.spaceNames + "${data[5]}"`;
     } else {
-      return `MERGE (zz:Zone {name:"${data[1]}",createdOn:"${
+      return `MERGE (zz:Zone {name:"${data[1]}",createdAt:"${
         data[3]
       }",externalSystem:"${data[6]}", externalObject:"${
         data[7]
