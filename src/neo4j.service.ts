@@ -1792,19 +1792,19 @@ export class Neo4jExcelService implements OnApplicationShutdown {
     return returnData.records;
 }
 
-  async createComponent(realm:string,data:string[],warrantyGuarantorPartsReferenceKey:string,warrantyGuarantorLaborReferenceKey:string,warrantyDurationLabor:string,warrantyDurationParts:string,spaceAndCreatedByArray:string[],urlContact:string,urlStructure:string){
+  async createComponent(realm:string,data:string[],warrantyGuarantorPartsReferenceId:string,warrantyGuarantorLaborReferenceKeyId:string,warrantyDurationLabor:string,warrantyDurationParts:string,spaceAndCreatedByArray:string[],urlContact:string,urlStructure:string){
  
   let cypher =`MATCH (tt:Types {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(t:Type {name:"${data[4]}",isDeleted:false}) \
   MERGE (c:Component {className:"Component",name:"${data[1]}",createdAt:"${data[3]}",description:"${data[6]}",externalSystem:"${data[7]}",externalObject:"${data[8]}", \
   externalIdentifier:"${data[9]}",serialNumber:"${data[10]}",installationDate:"${data[11]}",warrantyStartDate:"${data[12]}",tagNumber:"${data[13]}", \
   barCode:"${data[14]}",assetIdentifier:"${data[15]}",key:"${this.keyGenerate()}",warrantyDurationLabor:${warrantyDurationLabor},warrantyDurationParts:${warrantyDurationParts},warrantyDurationUnit:"",tag:[],spaceName:"${spaceAndCreatedByArray[1]['name']}",isDeleted:false,canDelete:true,isActive:true}) \
-  MERGE (wgp :Contact :Virtual {key:"${this.keyGenerate()}",referenceKey:"${warrantyGuarantorPartsReferenceKey}",type:"warrantyGuarantorParts",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true}) \
+  MERGE (wgp :Contact :Virtual {key:"${this.keyGenerate()}",referenceId:"${warrantyGuarantorPartsReferenceId}",type:"warrantyGuarantorParts",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true}) \
   SET wgp+={url:"${urlContact}/"+Id(wgp)}  \
-  MERGE (wgl :Contact :Virtual {key:"${this.keyGenerate()}",referenceKey:"${warrantyGuarantorLaborReferenceKey}",type:"warrantyGuarantorLabor",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true}) \
+  MERGE (wgl :Contact :Virtual {key:"${this.keyGenerate()}",referenceId:"${warrantyGuarantorLaborReferenceKeyId}",type:"warrantyGuarantorLabor",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true}) \
   SET wgl+={url:"${urlContact}/"+Id(wgl)}  \
-  MERGE (cnt :Contact :Virtual {key:"${this.keyGenerate()}",referenceKey:"${spaceAndCreatedByArray[0]}",type:"createdBy",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true}) \
+  MERGE (cnt :Contact :Virtual {key:"${this.keyGenerate()}",referenceId:"${spaceAndCreatedByArray[0]['id']}",type:"createdBy",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true}) \
   SET cnt+={url:"${urlContact}/"+Id(cnt)}  \
-  MERGE (spc :Structure :Virtual {key:"${this.keyGenerate()}",referenceKey:"${spaceAndCreatedByArray[1]['key']}",type:"space",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true}) \
+  MERGE (spc :Structure :Virtual {key:"${this.keyGenerate()}",referenceId:"${spaceAndCreatedByArray[1]['id']}",type:"space",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true}) \
   SET spc+={url:"${urlStructure}/"+spc.key}  \
   MERGE (t)-[:PARENT_OF {isDeleted:false}]->(c) \
   MERGE (c)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(wgp) MERGE (c)-[:WARRANTY_GUARANTOR_PARTS_BY {isDeleted:false}]->(wgp) \
@@ -1878,7 +1878,13 @@ export class Neo4jExcelService implements OnApplicationShutdown {
 
       let cypher = `MATCH (s:Systems {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(t:Type {name:"${data[3]}"})-[:PARENT_OF {isDeleted:false}]->(n:System {name:"${data[3]}",isDeleted:false})-[:PARENT_OF {isDeleted:false}]->(m:System {name:"${data[1]}",isDeleted:false}) return m;`;
       let returnData = await this.read(cypher);
+      if(returnData.records[0]['_fields'][0].length==1){
 
+        return ""
+      }
+      else{
+        return ""
+      }
 
 
 

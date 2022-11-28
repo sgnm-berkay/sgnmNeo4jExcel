@@ -1,6 +1,6 @@
 {
   "name": "sgnm-neo4j-excel",
-  "version": "0.0.44",
+  "version": "0.0.45",
   "description": "neo4j excel module for nestJs",
   "main": "dist/index.js",
   "types": "dist/index.d.js",
