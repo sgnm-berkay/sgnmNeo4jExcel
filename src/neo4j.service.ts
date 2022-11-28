@@ -1753,35 +1753,6 @@ export class Neo4jExcelService implements OnApplicationShutdown {
     
   }
 
-  ///// COMMON FUNCTIONS
-  keyGenerate() {
-    return uuidv4();
-  }
-
-  getValueFromRichText = async (datas: any[]) => {
-    try {
-      let returningDatas: string[] = [];
-
-      for (let i = 0; i < datas.length; i++) {
-        if (typeof datas[i] == "object") {
-          returningDatas.push(datas[i].text);
-        } else {
-          returningDatas.push(datas[i]);
-        }
-      }
-      return returningDatas;
-    } catch (error) {
-      throw new HttpException(
-        {
-          code: CustomClassificationError.DEFAULT_ERROR,
-          message: error.message,
-        },
-        error.status
-      );
-    }
-   
-  };
-
   async getSystemRelationFromDb(
     realm: string,
     data: string[],
@@ -1943,4 +1914,34 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       );
     }
   }
+
+
+  ///// COMMON FUNCTIONS
+  keyGenerate() {
+    return uuidv4();
+  }
+
+  getValueFromRichText = async (datas: any[]) => {
+    try {
+      let returningDatas: string[] = [];
+
+      for (let i = 0; i < datas.length; i++) {
+        if (typeof datas[i] == "object") {
+          returningDatas.push(datas[i].text);
+        } else {
+          returningDatas.push(datas[i]);
+        }
+      }
+      return returningDatas;
+    } catch (error) {
+      throw new HttpException(
+        {
+          code: CustomClassificationError.DEFAULT_ERROR,
+          message: error.message,
+        },
+        error.status
+      );
+    }
+   
+  };
 }
