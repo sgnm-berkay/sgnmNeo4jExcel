@@ -1847,20 +1847,20 @@ export class Neo4jExcelService implements OnApplicationShutdown {
 
   async getSubSystemFromDb(realm: string,data: string[]){
     try {
-      let cypher = `MATCH (s:Systems {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(n:System {name:"${data[3]}",isDeleted:false})-[:PARENT_OF {isDeleted:false}]->(m:SubSystem {name:"${data[1]}",isDeleted:false}) return m;`;
+      let cypher = `MATCH (s:Systems {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(n:System {name:"${data[2]}",isDeleted:false})-[:PARENT_OF {isDeleted:false}]->(m:System {name:"${data[1]}",isDeleted:false}) return m;`;
       let returnData = await this.read(cypher);
 
       if (returnData.records[0]['_fields'][0].length == 1) {
-        return `MATCH (s:SubSystem {key:"${returnData.records[0]["_fields"][0].properties.key}",isDeleted:false})`;
+        return `MATCH (s:System {key:"${returnData.records[0]["_fields"][0].properties.key}",isDeleted:false})`;
       } else {
-        return `MERGE (s:SubSystem {name:"${data[1]}",createdAt:"${
+        return `MERGE (s:System {name:"${data[1]}",createdAt:"${
           data[5]
         }",externalSystem:"${data[8]}",externalObject:"${
           data[9]
         }",externalIdentifier:"${data[10]}",description:"${
           data[11]
         }",images:"",documents:"",tag:[],key:"${this.keyGenerate()}",isDeleted:false,canDelete:true,isActive:true,className:"System"}) \
-      MERGE (ss:System {name:"${data[3]}",isDeleted:false})-[:PARENT_OF {isDeleted:false}]->(s)`;
+      MERGE (ss:System {name:"${data[2]}",isDeleted:false})-[:PARENT_OF {isDeleted:false}]->(s)`;
       }
     } catch (error) {
       throw new HttpException(
@@ -1873,31 +1873,6 @@ export class Neo4jExcelService implements OnApplicationShutdown {
     }
 }
 
-  async hasParentType(realm: string,data: string[]){
-    try {
-
-      let cypher = `MATCH (s:Systems {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(t:Type {name:"${data[3]}"})-[:PARENT_OF {isDeleted:false}]->(n:System {name:"${data[3]}",isDeleted:false})-[:PARENT_OF {isDeleted:false}]->(m:System {name:"${data[1]}",isDeleted:false}) return m;`;
-      let returnData = await this.read(cypher);
-      if(returnData.records[0]['_fields'][0].length==1){
-
-        return ""
-      }
-      else{
-        return ""
-      }
-
-
-
-    } catch (error) {
-      throw new HttpException(
-        {
-          code: CustomClassificationError.DEFAULT_ERROR,
-          message: error.message,
-        },
-        error.status
-      );
-    }
-  }
   ///// HTTP REQUESTS
 
   async getPropsOfContact(email: string, headers: MainHeaderInterface) {
