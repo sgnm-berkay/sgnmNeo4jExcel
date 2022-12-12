@@ -24,6 +24,12 @@ export const building_already_exist_object: errorObject={
       code: CustomClassificationError.BUILDING_ALREADY_EXIST
 }
 
+export const block_already_exist_object: errorObject={
+      message: 'error',
+      code: CustomClassificationError.BLOCK_ALREADY_EXIST
+}
+
+
 export const space_already_exist_object: errorObject={
       message: 'error',
       code: CustomClassificationError.SPACE_ALREADY_EXIST,

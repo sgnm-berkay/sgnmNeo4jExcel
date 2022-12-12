@@ -31,6 +31,7 @@ import {
 } from "./interfaces/header.interface";
 import { CustomClassificationError } from "./constant/import-export.error.enum";
 import {
+  block_already_exist_object,
   building_already_exist_object,
   contact_already_exist_object,
   floor_already_exist_object,
@@ -1302,6 +1303,93 @@ export class Neo4jExcelService implements OnApplicationShutdown {
     }
   }
 
+  async addBlocksToBuilding(
+    file: Express.Multer.File,
+    header: MainHeaderInterface,
+    buildingKey: string
+    ) {
+      let data = [];
+    try {
+      let email: string;
+      const { realm } = header;
+
+      let buffer = new Uint8Array(file.buffer);
+      const workbook = new exceljs.Workbook();
+
+      await workbook.xlsx.load(buffer).then(function async(book) {
+        const firstSheet = book.getWorksheet(4);
+        firstSheet.eachRow({ includeEmpty: false }, function (row) {
+          data.push(row.values);
+        });
+      });
+
+      for (let i = 0; i < data.length; i++) {
+        let checkBlock = await this.findChildrensByLabelsAndFilters(
+          ['Building'],
+          { key: buildingKey, isDeleted: false },
+          [`Block`],
+          { name: data[i][1], isDeleted: false },
+          'PARENT_OF',
+          {isDeleted: false},
+          1
+        );
+
+
+        if(checkBlock.length==0){
+          
+          if (typeof data[i][2] == "object") {
+            email = await data[i][2].text;
+          } else {
+            email = await data[i][2];
+          }
+
+          let cypher = `MATCH (a:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Building {key:"${buildingKey}",isDeleted:false}) \
+                   MATCH (cont:Contacts {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(p:Contact {email:"${email}",isDeleted:false}) \
+                   MERGE (f:Block {code:"",name:"${
+                     data[i][1]
+                   }",isDeleted:false,isActive:true,nodeType:"Block",description:"${
+            data[i][8]
+          }",tag:[],canDelete:true,canDisplay:true,key:"${this.keyGenerate()}",createdAt:"${
+            data[i][3]
+          }",elevation:"${data[i][9]}",height:"${
+            data[i][10]
+          }",externalSystem:"",externalObject:"",externalIdentifier:""}) \
+                   MERGE (b)-[:PARENT_OF {isDeleted:false}]->(f)\
+                   MERGE (f)-[:CREATED_BY {isDeleted:false}]->(p)`;
+
+          await this.write(cypher);
+        }
+        else {
+          throw new HttpException(
+            { ...block_already_exist_object, name: data[i][1] },
+            400
+          );
+        }
+      }
+
+
+    } catch (error) {
+      if (error.response?.code) {
+        throw new HttpException(
+          {
+            message: error.response?.message,
+            code: error.response?.code,
+            name: error.response?.name,
+          },
+          error.status
+        );
+      } else {
+        throw new HttpException(
+          {
+            code: CustomClassificationError.DEFAULT_ERROR,
+            message: error.message,
+          },
+          error.status
+        );
+      }
+    }
+  }
+
   async addFloorsToBuilding(
     file: Express.Multer.File,
     header: MainHeaderInterface,
@@ -1327,10 +1415,10 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           ["Building"],
           { key: buildingKey, isDeleted: false },
           [`Floor`],
-          { name: data[i][1], isDeleted: false },
+          { name: data[i][2], isDeleted: false },
           'PARENT_OF',
           {isDeleted: false},
-          1
+          ""
         );
 
         if (checkFloor.length == 0) {
@@ -1338,36 +1426,180 @@ export class Neo4jExcelService implements OnApplicationShutdown {
             await this.createCypherForClassification(
               realm,
               "FacilityFloorTypes",
-              data[i][4],
+              data[i][5],
               "f",
               "cc",
               "c",
               "CLASSIFIED_BY"
             );
 
-          if (typeof data[i][2] == "object") {
-            email = await data[i][2].text;
+          if (typeof data[i][3] == "object") {
+            email = await data[i][3].text;
           } else {
-            email = await data[i][2];
+            email = await data[i][3];
           }
 
-          let cypher = `MATCH (a:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Building {key:"${buildingKey}",isDeleted:false}) \
-                   ${createdCypher} \
-                   MATCH (cont:Contacts {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(p:Contact {email:"${email}",isDeleted:false}) \
-                   MERGE (f:Floor {code:"",name:"${
-                     data[i][1]
-                   }",isDeleted:false,isActive:true,nodeType:"Floor",description:"${
-            data[i][8]
-          }",tag:[],canDelete:true,canDisplay:true,key:"${this.keyGenerate()}",createdAt:"${
-            data[i][3]
-          }",elevation:"${data[i][9]}",height:"${
-            data[i][10]
-          }",externalSystem:"",externalObject:"",externalIdentifier:""}) \
-                   MERGE (b)-[:PARENT_OF {isDeleted:false}]->(f)\
-                   ${createdRelationCypher} \
-                   MERGE (f)-[:CREATED_BY {isDeleted:false}]->(p)`;
+          if(data[i][1]){
+            let cypher = `MATCH (a:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Building {key:"${buildingKey}",isDeleted:false}) \
+            ${createdCypher} \
+            MATCH (cont:Contacts {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(p:Contact {email:"${email}",isDeleted:false}) \
+            MERGE (blck:Block {name:"${data[i][1]}",isDeleted:false,isActive:true,canDelete:true,canDisplay:true,nodeType:"Block",createdAt:"${
+              data[i][4]
+            }",tag:[],key:"${this.keyGenerate()}"})
+            MERGE (f:Floor {code:"",name:"${
+              data[i][2]
+            }",isDeleted:false,isActive:true,nodeType:"Floor",description:"${
+              data[i][9]
+            }",tag:[],canDelete:true,canDisplay:true,key:"${this.keyGenerate()}",createdAt:"${
+              data[i][4]
+            }",elevation:"${data[i][10]}",height:"${
+              data[i][11]
+            }",externalSystem:"",externalObject:"",externalIdentifier:""}) \
+            MERGE (b)-[:PARENT_OF {isDeleted:false}]->(blck)
+            MERGE (blck)-[:PARENT_OF {isDeleted:false}]->(f)\
+            ${createdRelationCypher} \
+            MERGE (blck)-[:CREATED_BY {isDeleted:false}]->(p) \
+            MERGE (f)-[:CREATED_BY {isDeleted:false}]->(p)`;
 
-          await this.write(cypher);
+            await this.write(cypher);
+          }else {
+            let cypher = `MATCH (a:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Building {key:"${buildingKey}",isDeleted:false}) \
+            ${createdCypher} \
+            MATCH (cont:Contacts {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(p:Contact {email:"${email}",isDeleted:false}) \
+            MERGE (f:Floor {code:"",name:"${
+              data[i][2]
+            }",isDeleted:false,isActive:true,nodeType:"Floor",description:"${
+            data[i][9]
+          }",tag:[],canDelete:true,canDisplay:true,key:"${this.keyGenerate()}",createdAt:"${
+            data[i][4]
+          }",elevation:"${data[i][10]}",height:"${
+            data[i][11]
+          }",externalSystem:"",externalObject:"",externalIdentifier:""}) \
+            MERGE (b)-[:PARENT_OF {isDeleted:false}]->(f)\
+            ${createdRelationCypher} \
+            MERGE (f)-[:CREATED_BY {isDeleted:false}]->(p)`;
+
+   await this.write(cypher);
+          }
+        
+        } else {
+          throw new HttpException(
+            { ...floor_already_exist_object, name: data[i][1] },
+            400
+          );
+        }
+      }
+    } catch (error) {
+      if (error.response?.code) {
+        throw new HttpException(
+          {
+            message: error.response?.message,
+            code: error.response?.code,
+            name: error.response?.name,
+          },
+          error.status
+        );
+      } else {
+        throw new HttpException(
+          {
+            code: CustomClassificationError.DEFAULT_ERROR,
+            message: error.message,
+          },
+          error.status
+        );
+      }
+    }
+  }
+  async addFloorsToBlockOrBuilding(
+    file: Express.Multer.File,
+    header: MainHeaderInterface,
+    buildingKey: string
+  ) {
+    let data = [];
+    try {
+      let email: string;
+      const { realm } = header;
+
+      let buffer = new Uint8Array(file.buffer);
+      const workbook = new exceljs.Workbook();
+
+      await workbook.xlsx.load(buffer).then(function async(book) {
+        const firstSheet = book.getWorksheet(4);
+        firstSheet.eachRow({ includeEmpty: false }, function (row) {
+          data.push(row.values);
+        });
+      });
+
+      for (let i = 1; i < data.length; i++) {
+        let checkFloor = await this.findChildrensByLabelsAndFilters(
+          ["Building"],
+          { key: buildingKey, isDeleted: false },
+          [`Floor`],
+          { name: data[i][2], isDeleted: false },
+          'PARENT_OF',
+          {isDeleted: false},
+          ""
+        );
+
+        if (checkFloor.length == 0) {
+          let { createdCypher, createdRelationCypher } =
+            await this.createCypherForClassification(
+              realm,
+              "FacilityFloorTypes",
+              data[i][5],
+              "f",
+              "cc",
+              "c",
+              "CLASSIFIED_BY"
+            );
+
+          if (typeof data[i][3] == "object") {
+            email = await data[i][3].text;
+          } else {
+            email = await data[i][3];
+          }
+
+          if(data[i][1]){
+            let cypher = `MATCH (a:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Building {key:"${buildingKey}",isDeleted:false}) \
+            ${createdCypher} \
+            MATCH (cont:Contacts {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(p:Contact {email:"${email}",isDeleted:false}) \
+            ${await this.getBlockFromDb(buildingKey,data[i])}
+            MERGE (f:Floor {code:"",name:"${
+              data[i][2]
+            }",isDeleted:false,isActive:true,nodeType:"Floor",description:"${
+              data[i][9]
+            }",tag:[],canDelete:true,canDisplay:true,key:"${this.keyGenerate()}",createdAt:"${
+              data[i][4]
+            }",elevation:"${data[i][10]}",height:"${
+              data[i][11]
+            }",externalSystem:"",externalObject:"",externalIdentifier:""}) \
+            MERGE (b)-[:PARENT_OF {isDeleted:false}]->(blck)
+            MERGE (blck)-[:PARENT_OF {isDeleted:false}]->(f)\
+            ${createdRelationCypher} \
+            MERGE (blck)-[:CREATED_BY {isDeleted:false}]->(p) \
+            MERGE (f)-[:CREATED_BY {isDeleted:false}]->(p)`;
+
+           await this.write(cypher);
+          }else {
+            let cypher = `MATCH (a:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Building {key:"${buildingKey}",isDeleted:false}) \
+            ${createdCypher} \
+            MATCH (cont:Contacts {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(p:Contact {email:"${email}",isDeleted:false}) \
+            MERGE (f:Floor {code:"",name:"${
+              data[i][2]
+            }",isDeleted:false,isActive:true,nodeType:"Floor",description:"${
+            data[i][9]
+          }",tag:[],canDelete:true,canDisplay:true,key:"${this.keyGenerate()}",createdAt:"${
+            data[i][4]
+          }",elevation:"${data[i][10]}",height:"${
+            data[i][11]
+          }",externalSystem:"",externalObject:"",externalIdentifier:""}) \
+            MERGE (b)-[:PARENT_OF {isDeleted:false}]->(f)\
+            ${createdRelationCypher} \
+            MERGE (f)-[:CREATED_BY {isDeleted:false}]->(p)`;
+
+       await this.write(cypher);
+          }
+        
         } else {
           throw new HttpException(
             { ...floor_already_exist_object, name: data[i][1] },
@@ -1447,7 +1679,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           let cypher = `MATCH (a:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Building {key:"${buildingKey}",isDeleted:false}) \
         MATCH (cont:Contacts {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(p:Contact {email:"${email}",isDeleted:false}) \
         ${createdCypher} \
-        MATCH (b)-[:PARENT_OF {isDeleted:false}]->(f:Floor {name:"${
+        MATCH (b)-[:PARENT_OF* {isDeleted:false}]->(f:Floor {name:"${
           data[i][9]
         }",isDeleted:false}) \
         MERGE (s:Space {operatorCode:"",operatorName:"",name:"${
@@ -1740,6 +1972,29 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       data[5]
     }"], key:"${this.keyGenerate()}", canDisplay:true, isActive:true, isDeleted:false, canDelete:true})\
     MERGE (z)-[:PARENT_OF {isDeleted:false}]->(zz)`;
+    }
+    } catch (error) {
+      throw new HttpException(
+        {
+          code: CustomClassificationError.DEFAULT_ERROR,
+          message: error.message,
+        },
+        error.status
+      );
+    }
+    
+  }
+  async getBlockFromDb(buildingKey: string, data: string[]) {
+    try {
+      let cypher = `MATCH (b:Building {key:"${buildingKey}"})-[:PARENT_OF {isDeleted:false}]->(blck:Block {name:"${data[1]}"}) return blck`;
+    let returnData = await this.read(cypher);
+
+    if (returnData.records?.length == 1) {
+      return `MATCH (blck:Block {key:"${returnData.records[0]["_fields"][0].properties.key}",isDeleted:false})`;
+    } else {
+      return `MERGE (blck:Block {name:"${data[1]}",isDeleted:false,isActive:true,canDelete:true,canDisplay:true,nodeType:"Block",createdAt:"${
+        data[4]
+      }",tag:[],key:"${this.keyGenerate()}"})`;
     }
     } catch (error) {
       throw new HttpException(

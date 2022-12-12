@@ -19,6 +19,7 @@ export enum CustomClassificationError {
     THERE_ARE_NO_TYPE_OR_COMPONENT_OR_TYPE_ID_IS_WRONG=10018,
     CONTACT_EXPORT_ERROR= 10019,
     THERE_IS_NO_TYPE= 10020,
+    BLOCK_ALREADY_EXIST= 10021,
     
     }
     
