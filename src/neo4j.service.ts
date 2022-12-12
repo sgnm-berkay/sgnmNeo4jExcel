@@ -1986,7 +1986,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
   }
   async getBlockFromDb(buildingKey: string, data: string[]) {
     try {
-      let cypher = `MATCH (b:Building {key:"${buildingKey}"})-[:PARENT_OF {isDeleted:false}]->(blck:Block {name:"${data[1]}"}) return blck`;
+      let cypher = `MATCH (b:Building {key:"${buildingKey}"})-[:PARENT_OF {isDeleted:false}]->(blck:Block {name:"${data[1]}",isDeleted:false}) return blck`;
     let returnData = await this.read(cypher);
 
     if (returnData.records?.length == 1) {
