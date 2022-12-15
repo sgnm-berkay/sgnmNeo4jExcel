@@ -2298,7 +2298,8 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       let cypher = `MATCH (n:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Building {key:"${buildingKey}"})-[:PARENT_OF* {isDeleted:false}]->(s:Space {code:"${locationCode}",isDeleted:false}) return s`;
 
       let data = await this.read(cypher);
-      return {id:data.records[0]['_fields'].identity.low,key:data.records[0]["_fields"][0].properties.key,name:data.records[0]["_fields"][0].properties.name};
+      let object={id:data.records[0]['_fields'][0].identity.low,key:data.records[0]["_fields"][0].properties.key,name:data.records[0]["_fields"][0].properties.name};
+      return object;
     } catch (error) {
       throw new HttpException(
         {
