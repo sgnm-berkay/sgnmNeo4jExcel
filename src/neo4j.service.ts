@@ -635,7 +635,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
               i++
             ) {
               buildingType.push({
-                i: data.value.nodeType,
+                1: data.value.nodeType,
                 2: data.value.parent_of[index].nodeType,
                 3: data.value.parent_of[index].parent_of[i].nodeType,
               });
@@ -687,8 +687,8 @@ export class Neo4jExcelService implements OnApplicationShutdown {
                   ? spaceProperties.architecturalCode
                   : " ",
                 category: spaceProperties.classified_by[0].name,
-                grossArea: spaceProperties.grossArea,
-                netArea: spaceProperties.netArea,
+                grossArea: spaceProperties.grossArea.low,
+                netArea: spaceProperties.netArea.low,
                 usage: spaceProperties.usage ? spaceProperties.usage : " ",
                 tag: spaceProperties.tag.toString(),
                 roomTag: spaceProperties.roomTag.toString(),
@@ -700,7 +700,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
                   ? spaceProperties.operatorCode
                   : " ",
                 description: spaceProperties.description,
-                usableHeight: spaceProperties.usableHeight,
+                usableHeight: spaceProperties.usableHeight.low,
                 externalSystem: spaceProperties.externalSystem,
                 externalObject: spaceProperties.externalObject,
                 externalIdentifier: spaceProperties.externalIdentifier,
@@ -1044,7 +1044,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
         { header: "category", key: "category", width: 50 },
         { header: "createdBy", key: "createdBy", width: 50 },
         { header: "spaceNames", key: "spaceNames", width: 50 },
-        { header: "Code", key: "description", width: 50 },
+        { header: "description", key: "description", width: 90 },
         { header: "tags", key: "tags", width: 50 },
       ];
 
@@ -1106,7 +1106,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
         { header: "jointSpaceName", key: "jointSpaceName", width: 50 },
         { header: "category", key: "category", width: 50 },
         { header: "createdBy", key: "createdBy", width: 50 },
-        { header: "description", key: "description", width: 50 },
+        { header: "description", key: "description", width: 90 },
         { header: "tags", key: "tags", width: 50 },
         { header: "roomTags", key: "roomTags", width: 50 },
         { header: "status", key: "status", width: 50 },
@@ -1572,9 +1572,9 @@ export class Neo4jExcelService implements OnApplicationShutdown {
                 data[i][9]
               }",tag:[],canDelete:true,canDisplay:true,key:"${this.keyGenerate()}",createdAt:"${
                 data[i][4]
-              }",elevation:"${data[i][10]}",height:"${
+              }",elevation:"${data[i][10]}",height:${
                 data[i][11]
-              }",externalSystem:"",externalObject:"",externalIdentifier:""}) \
+              }.0,externalSystem:"",externalObject:"",externalIdentifier:""}) \
               MERGE (b)-[:PARENT_OF {isDeleted:false}]->(blck)
               MERGE (blck)-[:PARENT_OF {isDeleted:false}]->(f)\
               ${createdRelationCypher} \
@@ -1614,9 +1614,9 @@ export class Neo4jExcelService implements OnApplicationShutdown {
               data[i][9]
             }",tag:[],canDelete:true,canDisplay:true,key:"${this.keyGenerate()}",createdAt:"${
               data[i][4]
-            }",elevation:"${data[i][10]}",height:"${
+            }",elevation:"${data[i][10]}",height:${
               data[i][11]
-            }",externalSystem:"",externalObject:"",externalIdentifier:""}) \
+            }.0,externalSystem:"",externalObject:"",externalIdentifier:""}) \
               MERGE (b)-[:PARENT_OF {isDeleted:false}]->(f)\
               ${createdRelationCypher} \
               MERGE (f)-[:CREATED_BY {isDeleted:false}]->(p)`;
@@ -1719,9 +1719,9 @@ export class Neo4jExcelService implements OnApplicationShutdown {
                 }", \ 
               tag:[],roomTag:["${data[i][15]}"],usableHeight:${
                   data[i][16]
-                },grossArea:${data[i][17]},netArea:${
+                }.0,grossArea:${data[i][17]}.0,netArea:${
                   data[i][18]
-                },images:"",documents:"", \
+                }.0,images:"",documents:"", \
               canDisplay:true,isDeleted:false,isActive:true,nodeType:"Space",isBlocked:false,canDelete:true}) \
               MERGE (f)-[:PARENT_OF {isDeleted:false}]->(s) MERGE (s)-[:CREATED_BY {isDeleted:false}]->(p) ${createdRelationCypher};`;
                 await this.write(cypher);
@@ -1768,9 +1768,9 @@ export class Neo4jExcelService implements OnApplicationShutdown {
                     }", \ 
                   tag:[],roomTag:["${data[i][15]}"],usableHeight:"${
                       data[i][16]
-                    }",grossArea:"${data[i][17]}",netArea:"${
+                    }.0",grossArea:"${data[i][17]}.0",netArea:"${
                       data[i][18]
-                    }",images:"",documents:"", \
+                    }.0",images:"",documents:"", \
                   canDisplay:true,isDeleted:false,isActive:true,nodeType:"Space",isBlocked:false,canDelete:true}) \
                   MERGE (f)-[:PARENT_OF {isDeleted:false}]->(s) MERGE (s)-[:CREATED_BY {isDeleted:false}]->(p) ${createdRelationCypher};`;
                     await this.write(cypher);
@@ -1783,11 +1783,6 @@ export class Neo4jExcelService implements OnApplicationShutdown {
 
               }
 
-
-          
-         
-       
-        
       }
     } catch (error) {
       if (error.response?.code) {
@@ -1854,8 +1849,8 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           }
 
           let cypher = `MATCH (b:Building {key:"${buildingKey}"})-[:PARENT_OF]->(z:Zones {name:"Zones"})\
-   MATCH (c:Space {locationCode:"${data[i][5]}"})\
-   MATCH (cnt:Contacts {realm:"${realm}"})-[:PARENT_OF]->(p:Contact {email:"${email}"})\
+   MATCH (c:Space {locationCode:"${data[i][5]}",isDeleted:false})\
+   MATCH (cnt:Contacts {realm:"${realm}"})-[:PARENT_OF]->(p:Contact {email:"${email}",isDeleted:false})\
    ${createdCypher} \
    ${await this.getZoneFromDb(buildingKey, data[i])} \
    MERGE (z)-[:PARENT_OF {isDeleted:false}]->(zz)  \
@@ -2066,7 +2061,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
 
   async getBlockFromDb(buildingKey: string, data: string[]) {
     try {
-      let cypher = `MATCH (b:Building {key:"${buildingKey}"})-[:PARENT_OF {isDeleted:false}]->(blck:Block {name:"${data[1]}",isDeleted:false}) return blck`;
+      let cypher = `MATCH (b:Building {key:"${buildingKey}" ,isDeleted:false})-[:PARENT_OF {isDeleted:false}]->(blck:Block {name:"${data[1]}",isDeleted:false}) return blck`;
     let returnData = await this.read(cypher);
 
     if (returnData.records?.length == 1) {
@@ -2132,7 +2127,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
   let cypher =`MATCH (tt:Types {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(t:Type {name:"${data[4]}",isDeleted:false}) \
   MERGE (c:Component {className:"Component",name:"${data[1]}",createdAt:"${data[3]}",description:"${data[6]}",externalSystem:"${data[7]}",externalObject:"${data[8]}", \
   externalIdentifier:"${data[9]}",serialNumber:"${data[10]}",installationDate:"${data[11]}",warrantyStartDate:"${data[12]}",tagNumber:"${data[13]}", \
-  barCode:"${data[14]}",assetIdentifier:"${data[15]}",key:"${this.keyGenerate()}",warrantyDurationLabor:${+warrantyDurationLabor},warrantyDurationParts:${+warrantyDurationParts},warrantyDurationUnit:"",tag:[],spaceName:"${spaceAndCreatedByArray[1]['name']}",isDeleted:false,canDelete:true,isActive:true}) \
+  barCode:"${data[14]}",assetIdentifier:"${data[15]}",key:"${this.keyGenerate()}",warrantyDurationLabor:${+warrantyDurationLabor},warrantyDurationParts:${+warrantyDurationParts},warrantyDurationUnit:"",tag:[],spaceName:"${spaceAndCreatedByArray[1]['name']}",isDeleted:false,canDelete:true,isActive:true,canDisplay:true}) \
   SET c+={id:Id(c)}
   MERGE (wgp :Contact :Virtual {key:"${this.keyGenerate()}",referenceId:"${warrantyGuarantorPartsReferenceId}",type:"warrantyGuarantorParts",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true}) \
   SET wgp+={url:"${urlContact}/"+Id(wgp)}  \
