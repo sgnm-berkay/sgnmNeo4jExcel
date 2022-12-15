@@ -1687,14 +1687,14 @@ export class Neo4jExcelService implements OnApplicationShutdown {
               "c",
               "CLASSIFIED_BY"
             );
-          if (typeof data[i][7] == "object") {
-            email = await data[i][7].text;
+          if (typeof data[i][6] == "object") {
+            email = await data[i][6].text;
           } else {
-            email = await data[i][7];
+            email = await data[i][6];
           }
               if(data[i][1]){
 
-                let cypher2 = `MATCH (fs:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]-(b:Building {isDeleted:false ,key:"${buildingKey}"})-[:PARENT_OF {isDeleted:false}]->(blck:Block {name:"${data[i][1]}",isDeleted:false})-[:PARENT_OF {isDeleted:false}]->(f:Floor {name:"${data[i][1]}",isDeleted:false}) return f;`
+                let cypher2 = `MATCH (fs:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]-(b:Building {isDeleted:false ,key:"${buildingKey}"})-[:PARENT_OF {isDeleted:false}]->(blck:Block {name:"${data[i][1]}",isDeleted:false})-[:PARENT_OF {isDeleted:false}]->(f:Floor {name:"${data[i][9]}",isDeleted:false}) return f;`
             let checkFloor = await this.read(cypher2);
 
             if(checkFloor.records.length==0) {
@@ -1702,25 +1702,25 @@ export class Neo4jExcelService implements OnApplicationShutdown {
               MATCH (cont:Contacts {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(p:Contact {email:"${email}",isDeleted:false}) \
               ${createdCypher} \
               MATCH (b)-[:PARENT_OF {isDeleted:false}]->(blck:Block {name:"${data[i][1]}",isDeleted:false})-[:PARENT_OF {isDeleted:false}]->(f:Floor {name:"${
-                data[i][10]
+                data[i][9]
               }",isDeleted:false}) \
-              MERGE (s:Space {operatorCode:"",operatorName:"",name:"${
+              MERGE (s:Space {name:"${
                 data[i][2]
-              }",architecturalCode:"${data[i][5]}",architecturalName:"${
+              }",code:"${data[i][4]}",architecturalCode:"${data[i][5]}",architecturalName:"${
                   data[i][3]
-                }",locationCode:"${data[i][6]}",createdAt:"${
-                  data[i][8]
+                }",createdAt:"${
+                  data[i][7]
                 }",description:"${
-                  data[i][11]
+                  data[i][10]
                 }",key:"${this.keyGenerate()}",externalSystem:"${
-                  data[i][12]
-                }",externalObject:"${data[i][13]}",externalIdentifier:"${
-                  data[i][14]
+                  data[i][11]
+                }",externalObject:"${data[i][12]}",externalIdentifier:"${
+                  data[i][13]
                 }", \ 
-              tag:[],roomTag:["${data[i][15]}"],usableHeight:${
-                  data[i][16]
-                }.0,grossArea:${data[i][17]}.0,netArea:${
-                  data[i][18]
+              tag:[],roomTag:["${data[i][14]}"],usableHeight:${
+                  data[i][15]
+                }.0,grossArea:${data[i][16]}.0,netArea:${
+                  data[i][17]
                 }.0,images:"",documents:"", \
               canDisplay:true,isDeleted:false,isActive:true,nodeType:"Space",isBlocked:false,canDelete:true}) \
               MERGE (f)-[:PARENT_OF {isDeleted:false}]->(s) MERGE (s)-[:CREATED_BY {isDeleted:false}]->(p) ${createdRelationCypher};`;
@@ -1751,26 +1751,26 @@ export class Neo4jExcelService implements OnApplicationShutdown {
                   MATCH (cont:Contacts {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(p:Contact {email:"${email}",isDeleted:false}) \
                   ${createdCypher} \
                   MATCH (b)-[:PARENT_OF* {isDeleted:false}]->(f:Floor {name:"${
-                    data[i][10]
+                    data[i][9]
                   }",isDeleted:false}) \
-                  MERGE (s:Space {operatorCode:"",operatorName:"",name:"${
+                  MERGE (s:Space {name:"${
                     data[i][2]
-                  }",architecturalCode:"${data[i][5]}",architecturalName:"${
+                  }",code:"${data[i][4]}",architecturalCode:"${data[i][5]}",architecturalName:"${
                       data[i][3]
-                    }",locationCode:"${data[i][6]}",createdAt:"${
-                      data[i][8]
+                    }",createdAt:"${
+                      data[i][7]
                     }",description:"${
-                      data[i][11]
+                      data[i][10]
                     }",key:"${this.keyGenerate()}",externalSystem:"${
-                      data[i][12]
-                    }",externalObject:"${data[i][13]}",externalIdentifier:"${
-                      data[i][14]
+                      data[i][11]
+                    }",externalObject:"${data[i][12]}",externalIdentifier:"${
+                      data[i][13]
                     }", \ 
-                  tag:[],roomTag:["${data[i][15]}"],usableHeight:"${
-                      data[i][16]
-                    }.0",grossArea:"${data[i][17]}.0",netArea:"${
-                      data[i][18]
-                    }.0",images:"",documents:"", \
+                  tag:[],roomTag:["${data[i][14]}"],usableHeight:${
+                      data[i][15]
+                    }.0,grossArea:${data[i][16]}.0,netArea:${
+                      data[i][17]
+                    }.0,images:"",documents:"", \
                   canDisplay:true,isDeleted:false,isActive:true,nodeType:"Space",isBlocked:false,canDelete:true}) \
                   MERGE (f)-[:PARENT_OF {isDeleted:false}]->(s) MERGE (s)-[:CREATED_BY {isDeleted:false}]->(p) ${createdRelationCypher};`;
                     await this.write(cypher);
@@ -2147,6 +2147,69 @@ export class Neo4jExcelService implements OnApplicationShutdown {
 
 }
 
+  async createSystem(realm:string,data:string[],creatingCypher:string,createdCypher:string,emailData:string){
+  try {
+    if(data[2] && data[3]){
+      let cyphertype= `MATCH (tt:Types {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(t:Type {name:"${data[3]}",isDeleted:false}) return t;`
+        let typeNode= await this.read(cyphertype);
+      
+        let systemCypher =`MATCH (sys:Systems {realm:"${realm}"}) ${creatingCypher} \
+        MATCH (t:Type {key:"${typeNode.records[0]["_fields"][0].properties.key}"}) |
+        ${await this.getSubSystemFromDb(realm,data)} \
+        MERGE (s)-[:TYPE_OF_SYSTEM {isDeleted:false}]->(t) \
+        ${emailData}  \
+        ${createdCypher}`;
+        await this.write(systemCypher);
+      }
+      else if (data[2] && data[7]){
+        let systemCypher =`MATCH (sys:Systems {realm:"${realm}"}) ${creatingCypher} \
+        MATCH (comp:Component {name:"${data[7]}",isDeleted:false}) \
+        ${await this.getSubSystemFromDb(realm,data)} \
+        MERGE (s)-[:SYSTEM_OF {isDeleted:false}]->(comp) \
+        ${emailData}  \
+        ${createdCypher}`;
+      
+        await this.write(systemCypher);
+      }else if (data[3]){
+      
+        let cyphertype= `MATCH (tt:Types {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(t:Type {name:"${data[3]}",isDeleted:false}) return t;`
+        let typeNode= await this.read(cyphertype);
+      
+        let systemCypher =`MATCH (sys:Systems {realm:"${realm}"}) ${creatingCypher} \
+        MATCH (t:Type {key:"${typeNode.records[0]["_fields"][0].properties.key}"}) |
+        ${await this.getSystemFromDb(realm,data)} \
+        MERGE (s)-[:TYPE_OF_SYSTEM {isDeleted:false}]->(t) \
+        ${emailData}  \
+        ${createdCypher}`;
+      
+        await this.write(systemCypher);
+      }
+      else {
+        let systemCypher =`MATCH (sys:Systems {realm:"${realm}"}) ${creatingCypher} \
+        MATCH (comp:Component {name:"${data[7]}",isDeleted:false}) \
+        ${await this.getSystemFromDb(realm,data)} \
+        MERGE (s)-[:SYSTEM_OF {isDeleted:false}]->(comp) \
+        ${emailData}  \
+        ${createdCypher}`;
+      
+        await this.write(systemCypher);
+      }
+} catch (error) {
+  throw new HttpException(
+    {
+      code: CustomClassificationError.DEFAULT_ERROR,
+      message: error.message,
+    },
+    error.status
+  );
+}
+
+
+
+
+   
+  }
+
   async getSystemFromDb(realm: string, data: string[]) {
     try {
       let cypher = `MATCH (a:Systems {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(n:System {name:"${data[1]}",isDeleted:false}) return n;`;
@@ -2156,11 +2219,11 @@ export class Neo4jExcelService implements OnApplicationShutdown {
         return `MATCH (s:System {key:"${returnData.records[0]["_fields"][0].properties.key}",isDeleted:false})`;
       } else {
         return `MERGE (s:System {name:"${data[1]}",createdAt:"${
-          data[3]
-        }",externalSystem:"${data[6]}",externalObject:"${
-          data[7]
-        }",externalIdentifier:"${data[8]}",description:"${
+          data[5]
+        }",externalSystem:"${data[8]}",externalObject:"${
           data[9]
+        }",externalIdentifier:"${data[10]}",description:"${
+          data[11]
         }",images:"",documents:"",tag:[],key:"${this.keyGenerate()}",isDeleted:false,canDelete:true,isActive:"true",className:"System"}) \
       MERGE (sys)-[:PARENT_OF {isDeleted:false}]->(s)`;
       }
