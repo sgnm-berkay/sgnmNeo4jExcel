@@ -2131,14 +2131,14 @@ export class Neo4jExcelService implements OnApplicationShutdown {
   externalIdentifier:"${data[9]}",serialNumber:"${data[10]}",installationDate:"${data[11]}",warrantyStartDate:"${data[12]}",tagNumber:"${data[13]}", \
   barCode:"${data[14]}",assetIdentifier:"${data[15]}",key:"${this.keyGenerate()}",warrantyDurationLabor:${+warrantyDurationLabor},warrantyDurationParts:${+warrantyDurationParts},warrantyDurationUnit:"",tag:[],spaceName:"${spaceAndCreatedByArray[1]['name']}",isDeleted:false,canDelete:true,isActive:true,canDisplay:true}) \
   SET c+={id:Id(c)}
-  MERGE (wgp :Contact :Virtual {key:"${this.keyGenerate()}",referenceId:"${warrantyGuarantorPartsReferenceId}",type:"warrantyGuarantorParts",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true}) \
+  MERGE (wgp :Contact :Virtual {key:"${this.keyGenerate()}",referenceId:"${warrantyGuarantorPartsReferenceId}",referenceLabel:["Contact"],type:"warrantyGuarantorParts",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true, urlType:"GET"}) \
   SET wgp+={url:"${urlContact}/"+Id(wgp)}  \
-  MERGE (wgl :Contact :Virtual {key:"${this.keyGenerate()}",referenceId:"${warrantyGuarantorLaborReferenceKeyId}",type:"warrantyGuarantorLabor",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true}) \
+  MERGE (wgl :Contact :Virtual {key:"${this.keyGenerate()}",referenceId:"${warrantyGuarantorLaborReferenceKeyId}",referenceLabel:["Contact"],type:"warrantyGuarantorLabor",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true, urlType:"GET"}) \
   SET wgl+={url:"${urlContact}/"+Id(wgl)}  \
-  MERGE (cnt :Contact :Virtual {key:"${this.keyGenerate()}",referenceId:"${spaceAndCreatedByArray[0]['id']}",type:"createdBy",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true}) \
+  MERGE (cnt :Contact :Virtual {key:"${this.keyGenerate()}",referenceId:"${spaceAndCreatedByArray[0]['id']}",referenceLabel:["Contact"],type:"createdBy",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true, urlType:"GET"}) \
   SET cnt+={url:"${urlContact}/"+Id(cnt)}  \
-  MERGE (spc :Structure :Virtual {key:"${this.keyGenerate()}",referenceId:"${spaceAndCreatedByArray[1]['id']}",type:"space",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true}) \
-  SET spc+={url:"${urlStructure}/"+spc.key}  \
+  MERGE (spc :FacilityStructure :Virtual {key:"${this.keyGenerate()}",referenceId:"${spaceAndCreatedByArray[1]['id']}"referenceLabel:["Space"],,type:"space",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true, urlType:"POST"}) \
+  SET spc+={url:"${urlStructure}"}  \
   MERGE (t)-[:PARENT_OF {isDeleted:false}]->(c) \
   MERGE (c)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(wgp) MERGE (c)-[:WARRANTY_GUARANTOR_PARTS_BY {isDeleted:false}]->(wgp) \
   MERGE (c)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(wgl) MERGE (c)-[:WARRANTY_GUARANTOR_LABOR_BY {isDeleted:false}]->(wgl) \
