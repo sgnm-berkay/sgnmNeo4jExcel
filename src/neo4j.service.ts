@@ -521,7 +521,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
     try {
       let data: any;
       let jsonData = [];
-      let cypher = `WITH 'MATCH (a:Asset {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Systems) MATCH path = (b)-[:PARENT_OF {isDeleted:false}]->(s:System {key:"${systemKey}"})-[:SYSTEM_OF {isDeleted:false}]->(c:Component) where  s.isDeleted=false and c.isDeleted=false
+      let cypher = `WITH 'MATCH (a:Asset {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Systems) MATCH path = (b)-[:PARENT_OF* {isDeleted:false}]->(s:System {key:"${systemKey}"})-[:SYSTEM_OF|TYPE_OF_SYSTEM {isDeleted:false}]->(c) where  s.isDeleted=false and c.isDeleted=false
     WITH collect(path) AS paths
     CALL apoc.convert.toTree(paths)
     YIELD value
@@ -547,13 +547,15 @@ export class Neo4jExcelService implements OnApplicationShutdown {
         for (let j = 0; j < data.value.parent_of?.length; j++) {
           // system
           for (let c = 0; c < data.value.parent_of[j].system_of?.length; c++) {
-            // components
+            // components or type
 
             let componentProperties = data.value.parent_of[j].system_of[c];
+            let typeProperties = data.value.parent_of[j].type_of_system[c];
 
             jsonData.push({
               systemName: data.value.parent_of[j].name,
               systemDescription: data.value.parent_of[j].description,
+              typeName: typeProperties.name ? typeProperties.name:"",
               componentName: componentProperties.name,
               spaceName: componentProperties.spaceName,
               description: componentProperties.description,
@@ -1707,7 +1709,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
                 data[i][9]
               }",isDeleted:false}) \
               MERGE (s:Space {name:"${
-                data[i][2]
+                data[i][2]-data[i][4]
               }",code:"${data[i][4]}",architecturalCode:"${data[i][5]}",architecturalName:"${
                   data[i][3]
                 }",createdAt:"${
