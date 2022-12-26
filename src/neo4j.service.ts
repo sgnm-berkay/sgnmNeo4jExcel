@@ -2090,7 +2090,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
   async getSystemRelationFromDb(
     realm: string,
     data: string[],
-    emailReference: string[],
+    emailReference: any,
     urlContact: string
   ) {
     try {
@@ -2100,11 +2100,11 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       if (returnData.records?.length == 1) {
         return ``;
       } else {
-        return `MERGE (cnt :Contact :Virtual {key:"${this.keyGenerate()}",referenceKey:"${
-          emailReference[0]
+        return `MERGE (cnt :Contact :Virtual {key:"${this.keyGenerate()}",referenceKey:"${await 
+          emailReference[0].id
         }",type:"createdBy",isDeleted:false,createdAt:"${moment().format(
           "YYYY-MM-DD HH:mm:ss"
-        )}",canDelete:true ,url:"${urlContact}/${emailReference[0]['id']}"}) \\
+        )}",canDelete:true ,url:"${urlContact}/${emailReference[0]['id']}"}) \
       MERGE (s)-[:CREATED_BY {isDeleted:false}]->(cnt) MERGE (s)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(cnt)`;
       }
     } catch (error) {
@@ -2158,7 +2158,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
         let typeNode= await this.read(cyphertype);
       
         let systemCypher =`MATCH (sys:Systems {realm:"${realm}"}) ${creatingCypher} \
-        MATCH (t:Type {key:"${typeNode.records[0]["_fields"][0].properties.key}"}) |
+        MATCH (t:Type {key:"${typeNode.records[0]["_fields"][0].properties.key}"}) \
         ${await this.getSubSystemFromDb(realm,data)} \
         MERGE (s)-[:TYPE_OF_SYSTEM {isDeleted:false}]->(t) \
         ${emailData}  \
@@ -2178,9 +2178,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       
         let cyphertype= `MATCH (tt:Types {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(t:Type {name:"${data[3]}",isDeleted:false}) return t;`
         let typeNode= await this.read(cyphertype);
-      
-        let systemCypher =`MATCH (sys:Systems {realm:"${realm}"}) ${creatingCypher} \
-        MATCH (t:Type {key:"${typeNode.records[0]["_fields"][0].properties.key}"}) |
+        let systemCypher =`MATCH (sys:Systems {realm:"${realm}"}) ${creatingCypher} MATCH (t:Type {key:"${typeNode.records[0]["_fields"][0].properties.key}"}) \
         ${await this.getSystemFromDb(realm,data)} \
         MERGE (s)-[:TYPE_OF_SYSTEM {isDeleted:false}]->(t) \
         ${emailData}  \
@@ -2228,7 +2226,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           data[9]
         }",externalIdentifier:"${data[10]}",description:"${
           data[11]
-        }",images:"",documents:"",tag:[],key:"${this.keyGenerate()}",isDeleted:false,canDelete:true,isActive:"true",className:"System"}) \
+        }",images:"",documents:"",tag:[],key:"${this.keyGenerate()}",isDeleted:false,canDelete:true,isActive:true,className:"System"})
       MERGE (sys)-[:PARENT_OF {isDeleted:false}]->(s)`;
       }
     } catch (error) {
@@ -2245,20 +2243,20 @@ export class Neo4jExcelService implements OnApplicationShutdown {
 
   async getSubSystemFromDb(realm: string,data: string[]){
     try {
-      let cypher = `MATCH (s:Systems {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(n:System {name:"${data[2]}",isDeleted:false})-[:PARENT_OF {isDeleted:false}]->(m:System {name:"${data[1]}",isDeleted:false}) return m;`;
+      let cypher = `MATCH (s:Systems {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(n:System {name:"${data[2]}",isDeleted:false})-[:PARENT_OF* {isDeleted:false}]->(m:System {name:"${data[1]}",isDeleted:false}) return m;`;
       let returnData = await this.read(cypher);
 
-      if (returnData.records[0]['_fields'][0].length == 1) {
+      if (returnData.records.length == 1) {
         return `MATCH (s:System {key:"${returnData.records[0]["_fields"][0].properties.key}",isDeleted:false})`;
       } else {
-        return `MERGE (s:System {name:"${data[1]}",createdAt:"${
+        return `MATCH (sys)-[:PARENT_OF {isDeleted:false}]->(ss:System {name:"${data[2]}",isDeleted:false}) MERGE (s:System {name:"${data[1]}",createdAt:"${
           data[5]
         }",externalSystem:"${data[8]}",externalObject:"${
           data[9]
         }",externalIdentifier:"${data[10]}",description:"${
           data[11]
         }",images:"",documents:"",tag:[],key:"${this.keyGenerate()}",isDeleted:false,canDelete:true,isActive:true,className:"System"}) \
-      MERGE (ss:System {name:"${data[2]}",isDeleted:false})-[:PARENT_OF {isDeleted:false}]->(s)`;
+      MERGE (ss)-[:PARENT_OF {isDeleted:false}]->(s)`;
       }
     } catch (error) {
       throw new HttpException(
