@@ -2100,9 +2100,9 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       if (returnData.records?.length == 1) {
         return ``;
       } else {
-        return `MERGE (cnt :Contact :Virtual {key:"${this.keyGenerate()}",referenceKey:"${await 
+        return `MERGE (cnt :Contact :Virtual {key:"${this.keyGenerate()}",referenceId:"${await 
           emailReference[0].id
-        }",type:"createdBy",isDeleted:false,createdAt:"${moment().format(
+        }",referenceLabel:"Contact",urlType:"GET",type:"createdBy",isDeleted:false,createdAt:"${moment().format(
           "YYYY-MM-DD HH:mm:ss"
         )}",canDelete:true ,url:"${urlContact}/${emailReference[0]['id']}"}) \
       MERGE (s)-[:CREATED_BY {isDeleted:false}]->(cnt) MERGE (s)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(cnt)`;
