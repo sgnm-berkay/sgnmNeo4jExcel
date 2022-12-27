@@ -37,6 +37,7 @@ import {
   there_are_no_jointSpaces_object,
   there_are_no_spaces_object,
   there_are_no_system_or_component_or_both_object,
+  there_are_no_system_or_component_or_type_object,
   there_are_no_type_or_component_or_type_id_is_wrong_object,
   there_are_no_zones_object,
   there_is_no_type_object,
@@ -464,7 +465,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
 
         if (newData instanceof Error) {
           throw new HttpException(
-            there_are_no_system_or_component_or_both_object,
+            there_are_no_system_or_component_or_type_object,
             404
           );
         } else {
@@ -541,10 +542,10 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       console.log(data);
       
       if (data.length == 0) {
-        // throw new HttpException(
-        //   there_are_no_system_or_component_or_both_object,
-        //   404
-        // );
+        throw new HttpException(
+          there_are_no_system_or_component_or_type_object,
+          404
+        );
       } else {
           // system
 
@@ -603,7 +604,6 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           error.status
         );
       } else {
-        //default_error()
         throw new HttpException(
           {
             code: CustomClassificationError.DEFAULT_ERROR,
@@ -694,7 +694,6 @@ export class Neo4jExcelService implements OnApplicationShutdown {
         }
 
         let typeList = await Object.values(buildingType[0]);
-        console.log(typeList);
 
         if (!typeList.includes("Block")) {
           for (let index = 0; index < data.value.parent_of?.length; index++) {
@@ -902,7 +901,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
     try {
       let data: any;
       let jsonData = [];
-      let cypher = `WITH 'MATCH (c:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b {key:"${buildingKey}",isDeleted:false}) MATCH path = (b)-[:PARENT_OF* {isDeleted:false}]->(m)-[:CREATED_BY| CLASSIFIED_BY {isDeleted:false}]->(z) where (z.language="${language}" or not exists(z.language)) and m.isDeleted=false  and not (m:Space OR m:JointSpaces OR m:JointSpace OR m:Floor OR m:Block)
+      let cypher = `WITH 'MATCH (c:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Building {key:"${buildingKey}",isDeleted:false}) MATCH path = (b)-[:PARENT_OF* {isDeleted:false}]->(m)-[:CREATED_BY| CLASSIFIED_BY {isDeleted:false}]->(z) where (z.language="${language}" or not exists(z.language)) and m.isDeleted=false  and not (m:Space OR m:JointSpaces OR m:JointSpace OR m:Floor OR m:Block)
         WITH collect(path) AS paths
         CALL apoc.convert.toTree(paths)
         YIELD value
@@ -922,8 +921,6 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       if (Object.keys(data?.value).length == 0) {
         throw new HttpException(there_are_no_zones_object, 404);
       } else {
-        console.log(data.value.parent_of[0].parent_of[0].nodeType);
-        console.log(data.value.parent_of[0].parent_of.length);
 
         for (let index = 0; index < data.value.parent_of?.length; index++) {
           for (
@@ -1645,7 +1642,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
             }",elevation:"${data[i][10]}",height:${
               data[i][11]
             }.0,externalSystem:"",externalObject:"",externalIdentifier:""}) \
-              MERGE (b)-[:PARENT_OF {isDeleted:false}]->(f)\
+              MERGE (b)-[:PARENT_OF {isDeleted:false}]->(f) \
               ${createdRelationCypher} \
               MERGE (f)-[:CREATED_BY {isDeleted:false}]->(p)`;
   

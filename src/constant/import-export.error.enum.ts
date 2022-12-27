@@ -20,6 +20,7 @@ export enum CustomClassificationError {
     CONTACT_EXPORT_ERROR= 10019,
     THERE_IS_NO_TYPE= 10020,
     BLOCK_ALREADY_EXIST= 10021,
+    THERE_ARE_NO_SYSTEM_OR_COMPONENT_OR_TYPE_FOR_EXCEL=10022,
     
     }
     
