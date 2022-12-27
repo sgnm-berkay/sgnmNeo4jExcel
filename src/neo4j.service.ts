@@ -478,6 +478,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       worksheet.columns = [
         { header: "System Name", key: "systemName", width: 50 },
         { header: "System Description", key: "systemDescription", width: 50 },
+        { header: "Type Name", key: "typeName", width: 50 },
         { header: "Component Name", key: "componentName", width: 50 },
         { header: "Space Name", key: "spaceName", width: 50 },
         { header: "Description", key: "description", width: 50 },
@@ -505,7 +506,6 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           error.status
         );
       } else {
-        //default_error()
         throw new HttpException(
           {
             code: CustomClassificationError.DEFAULT_ERROR,
@@ -521,14 +521,14 @@ export class Neo4jExcelService implements OnApplicationShutdown {
     try {
       let data: any;
       let jsonData = [];
-      let cypher = `WITH 'MATCH (a:Asset {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Systems) MATCH path = (b)-[:PARENT_OF* {isDeleted:false}]->(s:System {key:"${systemKey}"})-[:SYSTEM_OF|TYPE_OF_SYSTEM {isDeleted:false}]->(c) where  s.isDeleted=false and c.isDeleted=false
-    WITH collect(path) AS paths
-    CALL apoc.convert.toTree(paths)
-    YIELD value
-    RETURN value' AS query
-    CALL apoc.export.json.query(query,'/${username}.json',{jsonFormat:'ARRAY_JSON'})
-    YIELD file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data
-    RETURN file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data`;
+      let cypher = `WITH 'MATCH (a:Asset {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Systems)-[:PARENT_OF* {isDeleted:false}]->(s:System {key:"${systemKey}",isDeleted:false}) MATCH path = (s)-[:SYSTEM_OF|TYPE_OF_SYSTEM {isDeleted:false}]->(ct) where  ct.isDeleted=false
+      WITH collect(path) AS paths
+      CALL apoc.convert.toTree(paths)
+      YIELD value
+      RETURN value' AS query
+      CALL apoc.export.json.query(query,'/${username}.json',{jsonFormat:'ARRAY_JSON'})
+      YIELD file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data
+      RETURN file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data`;
 
       await this.write(cypher);
 
@@ -538,35 +538,61 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       let returnData = await this.read(cypher2);
       data = await returnData.records[0]["_fields"][0];
 
+      console.log(data);
+      
       if (data.length == 0) {
-        throw new HttpException(
-          there_are_no_system_or_component_or_both_object,
-          404
-        );
+        // throw new HttpException(
+        //   there_are_no_system_or_component_or_both_object,
+        //   404
+        // );
       } else {
-        for (let j = 0; j < data.value.parent_of?.length; j++) {
           // system
-          for (let c = 0; c < data.value.parent_of[j].system_of?.length; c++) {
-            // components or type
 
-            let componentProperties = data.value.parent_of[j].system_of[c];
-            let typeProperties = data.value.parent_of[j].type_of_system[c];
-
-            jsonData.push({
-              systemName: data.value.parent_of[j].name,
-              systemDescription: data.value.parent_of[j].description,
-              typeName: typeProperties.name ? typeProperties.name:"",
-              componentName: componentProperties.name,
-              spaceName: componentProperties.spaceName,
-              description: componentProperties.description,
-              serialNo: componentProperties.serialNumber,
-              warrantyDurationLabor:
-                componentProperties.warrantyDurationLabor.low,
-              warrantyDurationParts:
-                componentProperties.warrantyDurationParts.low,
-            });
+          if(data.value.system_of?.length>0){
+            for (let c = 0; c < data.value.system_of?.length; c++) {
+              // components or type
+  
+              let componentProperties = data.value.system_of[c];
+              //let typeProperties = data.value.type_of_system[c];
+  
+              jsonData.push({
+                systemName: data.value.name,
+                systemDescription: data.value.description,
+                typeName: "",
+                componentName: componentProperties.name,
+                spaceName: componentProperties.spaceName,
+                description: componentProperties.description,
+                serialNo: componentProperties.serialNumber,
+                warrantyDurationLabor:
+                  componentProperties.warrantyDurationLabor.low,
+                warrantyDurationParts:
+                  componentProperties.warrantyDurationParts.low,
+              });
+            }
           }
-        }
+           if(data.value.type_of_system?.length>0){
+            for (let c = 0; c < data.value.type_of_system?.length; c++) {
+              // components or type
+  
+              let typeProperties = data.value.type_of_system[c];
+  
+              jsonData.push({
+                systemName: data.value.name,
+                systemDescription: data.value.description,
+                typeName: typeProperties.name ? typeProperties.name:"",
+                componentName: "",
+                spaceName: "",
+                description: "",
+                serialNo: "",
+                warrantyDurationLabor:
+                  "",
+                warrantyDurationParts:
+                  "",
+              });
+            }
+          }
+         
+        
 
         return jsonData;
       }
