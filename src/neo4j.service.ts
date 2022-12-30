@@ -1732,7 +1732,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
                 data[i][9]
               }",isDeleted:false}) \
               MERGE (s:Space {name:"${
-                data[i][2]-data[i][4]
+                data[i][2]}-${data[i][4]
               }",code:"${data[i][4]}",architecturalCode:"${data[i][5]}",architecturalName:"${
                   data[i][3]
                 }",createdAt:"${
@@ -1781,7 +1781,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
                     data[i][9]
                   }",isDeleted:false}) \
                   MERGE (s:Space {name:"${
-                    data[i][2]-data[i][4]
+                    data[i][2]}-${data[i][4]
                   }",code:"${data[i][4]}",architecturalCode:"${data[i][5]}",architecturalName:"${
                       data[i][3]
                     }",createdAt:"${
