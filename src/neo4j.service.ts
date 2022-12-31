@@ -1701,6 +1701,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
        
        
           const [code, ...rest] = await data[i][8].split(new RegExp(/:\s{1}/g));
+          const [code2, ...rest2] = await data[i][18].split(new RegExp(/:\s{1}/g));
 
           let { createdCypher, createdRelationCypher } =
             await this.createCypherForClassification(
@@ -1712,6 +1713,18 @@ export class Neo4jExcelService implements OnApplicationShutdown {
               "c",
               "CLASSIFIED_BY"
             );
+
+            let { createdCypher:createdCypher2, createdRelationCypher:createdRelationCypher2 } =
+            await this.createCypherForClassification(
+              realm,
+              "SpaceUsageType",
+              code2,
+              "s",
+              "sutm",
+              "sut",
+              "USAGE_BY"
+            );
+
           if (typeof data[i][6] == "object") {
             email = await data[i][6].text;
           } else {
@@ -1728,6 +1741,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
               let cypher = `MATCH (a:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Building {key:"${buildingKey}",isDeleted:false}) \
               MATCH (cont:Contacts {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(p:Contact {email:"${email}",isDeleted:false}) \
               ${createdCypher} \
+              ${createdCypher2} \
               MATCH (b)-[:PARENT_OF {isDeleted:false}]->(blck:Block {name:"${data[i][1]}",isDeleted:false})-[:PARENT_OF {isDeleted:false}]->(f:Floor {name:"${
                 data[i][9]
               }",isDeleted:false}) \
@@ -1750,7 +1764,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
                   data[i][17]
                 },images:"",documents:"", \
               canDisplay:true,isDeleted:false,isActive:true,nodeType:"Space",isBlocked:false,canDelete:true}) \
-              MERGE (f)-[:PARENT_OF {isDeleted:false}]->(s) MERGE (s)-[:CREATED_BY {isDeleted:false}]->(p) ${createdRelationCypher};`;
+              MERGE (f)-[:PARENT_OF {isDeleted:false}]->(s) MERGE (s)-[:CREATED_BY {isDeleted:false}]->(p) ${createdRelationCypher} ${createdRelationCypher2};`;
                 await this.write(cypher);
                 
             }else{
@@ -1777,6 +1791,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
                   let cypher = `MATCH (a:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Building {key:"${buildingKey}",isDeleted:false}) \
                   MATCH (cont:Contacts {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(p:Contact {email:"${email}",isDeleted:false}) \
                   ${createdCypher} \
+                  ${createdCypher2} \
                   MATCH (b)-[:PARENT_OF* {isDeleted:false}]->(f:Floor {name:"${
                     data[i][9]
                   }",isDeleted:false}) \
@@ -1799,7 +1814,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
                       data[i][17]
                     },images:"",documents:"", \
                   canDisplay:true,isDeleted:false,isActive:true,nodeType:"Space",isBlocked:false,canDelete:true}) \
-                  MERGE (f)-[:PARENT_OF {isDeleted:false}]->(s) MERGE (s)-[:CREATED_BY {isDeleted:false}]->(p) ${createdRelationCypher};`;
+                  MERGE (f)-[:PARENT_OF {isDeleted:false}]->(s) MERGE (s)-[:CREATED_BY {isDeleted:false}]->(p) ${createdRelationCypher} ${createdRelationCypher2};`;
                     await this.write(cypher);
                 }else{
                       throw new HttpException(
