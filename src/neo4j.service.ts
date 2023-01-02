@@ -1702,7 +1702,8 @@ export class Neo4jExcelService implements OnApplicationShutdown {
        
           const [code, ...rest] = await data[i][8].split(new RegExp(/:\s{1}/g));
           const [code2, ...rest2] = await data[i][18].split(new RegExp(/:\s{1}/g));
-
+          const [code3, ...rest3] = await data[i][19].split(new RegExp(/:\s{1}/g));
+          
           let { createdCypher, createdRelationCypher } =
             await this.createCypherForClassification(
               realm,
@@ -1725,6 +1726,17 @@ export class Neo4jExcelService implements OnApplicationShutdown {
               "USAGE_BY"
             );
 
+            let { createdCypher:createdCypher3, createdRelationCypher:createdRelationCypher3 } =
+            await this.createCypherForClassification(
+              realm,
+              "FacilityStatus",
+              code3,
+              "s",
+              "fsm",
+              "fs",
+              "STATUS_BY"
+            );
+
           if (typeof data[i][6] == "object") {
             email = await data[i][6].text;
           } else {
@@ -1742,6 +1754,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
               MATCH (cont:Contacts {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(p:Contact {email:"${email}",isDeleted:false}) \
               ${createdCypher} \
               ${createdCypher2} \
+              ${createdCypher3} \
               MATCH (b)-[:PARENT_OF {isDeleted:false}]->(blck:Block {name:"${data[i][1]}",isDeleted:false})-[:PARENT_OF {isDeleted:false}]->(f:Floor {name:"${
                 data[i][9]
               }",isDeleted:false}) \
@@ -1760,11 +1773,11 @@ export class Neo4jExcelService implements OnApplicationShutdown {
                 }", \ 
               tag:[],roomTag:["${data[i][14]}"],usableHeight:${
                   data[i][15]
-                },grossArea:${data[i][16]},netArea:${
+                }.0,grossArea:${data[i][16]}.0,netArea:${
                   data[i][17]
-                },images:"",documents:"", \
+                }.0,images:"",documents:"", \
               canDisplay:true,isDeleted:false,isActive:true,nodeType:"Space",isBlocked:false,canDelete:true}) \
-              MERGE (f)-[:PARENT_OF {isDeleted:false}]->(s) MERGE (s)-[:CREATED_BY {isDeleted:false}]->(p) ${createdRelationCypher} ${createdRelationCypher2};`;
+              MERGE (f)-[:PARENT_OF {isDeleted:false}]->(s) MERGE (s)-[:CREATED_BY {isDeleted:false}]->(p) ${createdRelationCypher} ${createdRelationCypher2} ${createdRelationCypher3};`;
                 await this.write(cypher);
                 
             }else{
@@ -1792,6 +1805,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
                   MATCH (cont:Contacts {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(p:Contact {email:"${email}",isDeleted:false}) \
                   ${createdCypher} \
                   ${createdCypher2} \
+                  ${createdCypher3} \
                   MATCH (b)-[:PARENT_OF* {isDeleted:false}]->(f:Floor {name:"${
                     data[i][9]
                   }",isDeleted:false}) \
@@ -1810,11 +1824,11 @@ export class Neo4jExcelService implements OnApplicationShutdown {
                     }", \ 
                   tag:[],roomTag:["${data[i][14]}"],usableHeight:${
                       data[i][15]
-                    },grossArea:${data[i][16]},netArea:${
+                    }.0,grossArea:${data[i][16]}.0,netArea:${
                       data[i][17]
-                    },images:"",documents:"", \
+                    }.0,images:"",documents:"", \
                   canDisplay:true,isDeleted:false,isActive:true,nodeType:"Space",isBlocked:false,canDelete:true}) \
-                  MERGE (f)-[:PARENT_OF {isDeleted:false}]->(s) MERGE (s)-[:CREATED_BY {isDeleted:false}]->(p) ${createdRelationCypher} ${createdRelationCypher2};`;
+                  MERGE (f)-[:PARENT_OF {isDeleted:false}]->(s) MERGE (s)-[:CREATED_BY {isDeleted:false}]->(p) ${createdRelationCypher} ${createdRelationCypher2} ${createdRelationCypher3};`;
                     await this.write(cypher);
                 }else{
                       throw new HttpException(
