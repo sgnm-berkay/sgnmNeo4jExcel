@@ -1746,7 +1746,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
 
                 let cypher2 = `MATCH (fs:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]-(b:Building {isDeleted:false ,key:"${buildingKey}"})-[:PARENT_OF {isDeleted:false}]->(blck:Block {name:"${data[i][1]}",isDeleted:false})-[:PARENT_OF {isDeleted:false}]->(f:Floor {name:"${data[i][9]}",isDeleted:false}) return f;`
             let checkFloor = await this.read(cypher2);
-            let cypher3 = `MATCH (fs:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]-(b:Building {isDeleted:false ,key:"${buildingKey}"})-[:PARENT_OF {isDeleted:false}]->(blck:Block {name:"${data[i][1]}",isDeleted:false})-[:PARENT_OF* {isDeleted:false}]->(s:Space {name:"${data[i][2]}",isDeleted:false}) return s;`
+            let cypher3 = `MATCH (fs:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]-(b:Building {isDeleted:false ,key:"${buildingKey}"})-[:PARENT_OF {isDeleted:false}]->(blck:Block {name:"${data[i][1]}",isDeleted:false})-[:PARENT_OF* {isDeleted:false}]->(s:Space {code:"${data[i][4]}",isDeleted:false}) return s;`
             let checkSpace = await this.read(cypher3);
 
             if(checkFloor.records.length>0 && checkSpace.records.length ==0) {
