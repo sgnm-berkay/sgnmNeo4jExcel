@@ -2010,7 +2010,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
             data[i][17]
           }",postalCode:"${data[i][18]}",country:"${
             data[i][19]
-          }",canDisplay:true,isDeleted:false,isActive:true,className:"Contact",key:"${this.keyGenerate()}",canDelete:true} )\
+          }",canDisplay:true,isDeleted:false,isActive:true,className:"Contact",key:"${this.keyGenerate()}",canDelete:true, tag:[] } )\
       MERGE (c)-[a:PARENT_OF {isDeleted:false}]->(p)  ${createdRelationCypher}`;
           await this.write(cypher);
 
