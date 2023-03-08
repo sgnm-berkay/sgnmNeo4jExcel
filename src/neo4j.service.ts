@@ -247,7 +247,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
     try {
       let data: any;
       let jsonData = [];
-      let cypher = `WITH 'MATCH (c:Asset {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Types) MATCH path = (b)-[:PARENT_OF {isDeleted:false}]->(m:Type {key:"${typeKey}"})-[:CLASSIFIED_BY| ASSET_TYPE_BY| DURATION_UNIT_BY| TYPE_CLASSIFIED_BY| BRAND_BY {isDeleted:false}]->(z) where  z.language="${language}" and m.isDeleted=false  and not (m:Component) 
+      let cypher = `WITH 'MATCH (c:Asset {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Types) MATCH path = (b)-[:PARENT_OF {isDeleted:false}]->(m:Type {key:"${typeKey}"})-[:CLASSIFIED_BY| ASSET_TYPE_BY| WARRANTY_DURATION_UNIT_BY | TYPE_CLASSIFIED_BY| BRAND_BY | DURATION_UNIT_BY | MEASUREMENT_UNIT_BY {isDeleted:false}]->(z) where  z.language="${language}" and m.isDeleted=false  and not (m:Component) 
     WITH collect(path) AS paths
     CALL apoc.convert.toTree(paths)
     YIELD value
@@ -282,6 +282,8 @@ export class Neo4jExcelService implements OnApplicationShutdown {
             typeCategory: typeProperties.type_classified_by[0].name,
             brand: typeProperties.brand_by[0].name,
             durationUnit: typeProperties.duration_unit_by[0].name,
+            warrantyDurationUnit: typeProperties.warranty_duration_unit_by[0].name,
+            measurementUnit: typeProperties.measurement_unit_by[0].name,
             createdAt: typeProperties.createdAt,
           });
         }
@@ -297,13 +299,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           error.status
         );
       } else {
-        throw new HttpException(
-          {
-            code: CustomClassificationError.DEFAULT_ERROR,
-            message: error.message,
-          },
-          error.status
-        );
+        throw new HttpException(error,500);
       }
     }
   }
@@ -2191,7 +2187,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
     SET wgl+={url:"${urlContact}/"+"${warrantyGuarantorLaborReferenceKeyId}"}  \
     MERGE (cnt :Contact :Virtual {key:"${this.keyGenerate()}",referenceId:"${spaceAndCreatedByArray[0]['id']}",name:"${wgpAndWglNames[2]['name']}",virtualPropertyField:"email",referenceLabel:["Contact"],type:"createdBy",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true, urlType:"GET"}) \
     SET cnt+={url:"${urlContact}/"+"${spaceAndCreatedByArray[0]['id']}"}  \
-    MERGE (spc :FacilityStructure :Virtual {key:"${this.keyGenerate()}",referenceId:"${spaceAndCreatedByArray[1]['id']}",name:"${spaceAndCreatedByArray[1]['name']}",virtualPropertyField:"name",referenceLabel:["Space"],type:"space",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true, urlType:"POST"}) \
+    MERGE (spc :FacilityStructure :Virtual {key:"${this.keyGenerate()}",referenceId:"${spaceAndCreatedByArray[1]['id']}",name:"${spaceAndCreatedByArray[1]['name']}",virtualPropertyField:"name",referenceLabel:["Space"],type:"structure",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true, urlType:"POST"}) \
     SET spc+={url:"${urlStructure}"}  \
     MERGE (t)-[:PARENT_OF {isDeleted:false}]->(c) \
     MERGE (c)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(wgp) MERGE (c)-[:WARRANTY_GUARANTOR_PARTS_BY {isDeleted:false}]->(wgp) \
@@ -2256,12 +2252,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
     },
     error.status
   );
-}
-
-
-
-
-   
+}   
   }
 
   async getSystemFromDb(realm: string, data: string[]) {
@@ -2321,7 +2312,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
     }
 }
 
-  ///// HTTP REQUESTS
+  // HTTP REQUESTS
 
   async getPropsOfContact(email: string, headers: MainHeaderInterface) {
     try {
