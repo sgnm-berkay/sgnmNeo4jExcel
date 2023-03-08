@@ -195,7 +195,8 @@ export class Neo4jExcelService implements OnApplicationShutdown {
 
       worksheet.columns = [
         { header: "Type Name", key: "typeName", width: 50 },
-        { header: "Model Name", key: "modelName", width: 50 },
+        { header: "Model Name", key: "modelNumber", width: 50 },
+        { header: "Super Set", key: "superSet", width: 50 },
         { header: "Description", key: "description", width: 50 },
         {
           header: "Warranty Duration Parts",
@@ -212,6 +213,8 @@ export class Neo4jExcelService implements OnApplicationShutdown {
         { header: "Type Category", key: "typeCategory", width: 50 },
         { header: "Brand", key: "brand", width: 50 },
         { header: "Duration Unit", key: "durationUnit", width: 50 },
+        { header: "Warranty Duration Unit", key: "warrantyDurationUnit", width: 50 },
+        { header: "Measurement Unit", key: "measurementUnit", width: 50 },
         { header: "Created At", key: "createdAt", width: 50 },
       ];
 
@@ -228,11 +231,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
         );
       } else {
         throw new HttpException(
-          {
-            code: CustomClassificationError.DEFAULT_ERROR,
-            message: error.message,
-          },
-          error.status
+        error,500
         );
       }
     }
@@ -273,7 +272,8 @@ export class Neo4jExcelService implements OnApplicationShutdown {
   
           jsonData.push({
             typeName: typeProperties.name,
-            modelName: typeProperties.modelNumber,
+            modelNumber: typeProperties.modelNumber,
+            superSet:typeProperties.superSet,
             description: typeProperties.description,
             warrantyDurationParts: typeProperties.warrantyDurationParts,
             warrantyDurationLabor: typeProperties.warrantyDurationLabor,
