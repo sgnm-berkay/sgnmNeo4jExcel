@@ -2180,7 +2180,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
     MERGE (c:Component {className:"Component",name:"${data[1]}",createdAt:"${data[3]}",description:"${data[6]}",externalSystem:"${data[7]}",externalObject:"${data[8]}", \
     externalIdentifier:"${data[9]}",serialNumber:"${data[10]}",installationDate:"${data[11]}",warrantyStartDate:"${data[12]}",tagNumber:"${data[13]}", \
     barCode:"${data[14]}",assetIdentifier:"${data[15]}",key:"${this.keyGenerate()}",warrantyDurationLabor:${+warrantyDurationLabor}.0,warrantyDurationParts:${+warrantyDurationParts}.0,warrantyDurationUnit:"",tag:[],spaceName:"${spaceAndCreatedByArray[1]['name']}",isDeleted:false,canDelete:true,isActive:true,canDisplay:true}) \
-    SET c+={id:Id(c)}
+    SET c+={id:toFloat(Id(c))}
     MERGE (wgp :Contact :Virtual {key:"${this.keyGenerate()}",referenceId:"${warrantyGuarantorPartsReferenceId}",name:"${wgpAndWglNames[0]['name']}",virtualPropertyField:"email",referenceLabel:["Contact"],type:"warrantyGuarantorParts",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true, urlType:"GET"}) \
     SET wgp+={url:"${urlContact}/"+"${warrantyGuarantorPartsReferenceId}"}  \
     MERGE (wgl :Contact :Virtual {key:"${this.keyGenerate()}",referenceId:"${warrantyGuarantorLaborReferenceKeyId}",name:"${wgpAndWglNames[1]['name']}",virtualPropertyField:"email",referenceLabel:["Contact"],type:"warrantyGuarantorLabor",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true, urlType:"GET"}) \
@@ -2246,11 +2246,8 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       }
 } catch (error) {
   throw new HttpException(
-    {
-      code: CustomClassificationError.DEFAULT_ERROR,
-      message: error.message,
-    },
-    error.status
+    error,
+    500
   );
 }   
   }
