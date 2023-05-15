@@ -1600,10 +1600,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
             await this.write(cypher);
             }
             else {
-              throw new HttpException(
-                      { ...floor_already_exist_object, name: data[i][1] },
-                      400
-                    );
+              throw new HttpException(floor_already_exist_object(data[i][2]),400);
             }
 
          
@@ -1639,10 +1636,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
   
          await this.write(cypher);
             }else{
-          throw new HttpException(
-            { ...floor_already_exist_object, name: data[i][1] },
-            400
-          );
+              throw new HttpException(floor_already_exist_object(data[i][2]),400);
             }
           }
       }
@@ -1658,11 +1652,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
         );
       } else {
         throw new HttpException(
-          {
-            code: CustomClassificationError.DEFAULT_ERROR,
-            message: error.message,
-          },
-          error.status
+          error,500
         );
       }
     }
