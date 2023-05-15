@@ -19,11 +19,13 @@ export const floor_already_exist_object: errorObject ={
       code: CustomClassificationError.FLOOR_ALREADY_EXIST
 }
 
-export const building_already_exist_object: errorObject={
-      message: 'error',
-      code: CustomClassificationError.BUILDING_ALREADY_EXIST
-}
-
+export function building_already_exist_object() {
+      return {
+        message: 'error',
+        code: CustomClassificationError.BUILDING_ALREADY_EXIST
+      };
+    }
+    
 export const block_already_exist_object: errorObject={
       message: 'error',
       code: CustomClassificationError.BLOCK_ALREADY_EXIST

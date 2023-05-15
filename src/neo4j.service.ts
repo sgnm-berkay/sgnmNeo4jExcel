@@ -1309,7 +1309,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
 
         await this.write(cypher);
       } else {
-        throw new HttpException(building_already_exist_object, 400);
+        throw new HttpException(building_already_exist_object(), 400);
       }
     } catch (error) {
       if (error.response?.code) {
@@ -1318,13 +1318,8 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           error.status
         );
       } else {
-        //default_error()
         throw new HttpException(
-          {
-            code: CustomClassificationError.DEFAULT_ERROR,
-            message: error.message,
-          },
-          error.status
+         error,500
         );
       }
     }
