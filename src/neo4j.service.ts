@@ -1762,10 +1762,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
                 await this.write(cypher);
                 
             }else{
-              throw new HttpException(
-                { ...space_already_exist_object, name: data[i][2] },
-                400
-              );
+              throw new HttpException(space_already_exist_object(data[i][2]),400);
             }
 
        
@@ -1812,10 +1809,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
                   MERGE (f)-[:PARENT_OF {isDeleted:false}]->(s) MERGE (s)-[:CREATED_BY {isDeleted:false}]->(p) ${createdRelationCypher} ${createdRelationCypher2} ${createdRelationCypher3};`;
                     await this.write(cypher);
                 }else{
-                      throw new HttpException(
-                        { ...space_already_exist_object, name: data[i][2] },
-                        400
-                      );
+                  throw new HttpException(space_already_exist_object(data[i][2]),400);
                 }
 
               }
@@ -1833,11 +1827,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
         );
       } else {
         throw new HttpException(
-          {
-            code: CustomClassificationError.DEFAULT_ERROR,
-            message: error.message,
-          },
-          error.status
+         error,500
         );
       }
     }

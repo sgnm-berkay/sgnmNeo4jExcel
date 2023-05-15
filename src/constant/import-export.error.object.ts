@@ -35,11 +35,15 @@ export const block_already_exist_object: errorObject={
       code: CustomClassificationError.BLOCK_ALREADY_EXIST
 }
 
-
-export const space_already_exist_object: errorObject={
-      message: 'error',
-      code: CustomClassificationError.SPACE_ALREADY_EXIST,
+export function space_already_exist_object(name:string){
+      return {
+            name,
+            message: 'error',
+            code: CustomClassificationError.SPACE_ALREADY_EXIST
+      }
+   
 }
+
 
 
 export const zone_already_exist_object: errorObject ={
