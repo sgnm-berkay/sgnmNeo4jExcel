@@ -1773,7 +1773,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
                   ["Building"],
                   { key: buildingKey },
                   [`Space`],
-                  { code: data[i][4], isDeleted: false },
+                  { code: typeof data[i][4]  == "number" ? data[i][4].toString() : data[i][4], isDeleted: false },
                   'PARENT_OF',
                   {isDeleted: false}
                 );
@@ -1853,7 +1853,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       });
 
       for (let i = 1; i < data.length; i++) {
-        let cypher = `MATCH (n:Building {key:"${buildingKey}",isDeleted:false})-[:PARENT_OF* {isDeleted:false}]->(s:Space {locationCode:"${data[i][5]}",isDeleted:false}) \ 
+        let cypher = `MATCH (n:Building {key:"${buildingKey}",isDeleted:false})-[:PARENT_OF* {isDeleted:false}]->(s:Space {code:"${data[i][5]}",isDeleted:false}) \ 
   MATCH (s)-[:MERGEDZN {isDeleted:false}]->(z:Zone {name:"${data[i][1]}",isDeleted:false}) return z`;
         let returnData = await this.read(cypher);
 
@@ -1887,10 +1887,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
 
           await this.write(cypher);
         } else {
-          throw new HttpException(
-            { ...space_has_already_relation_object, name: data[i][1] },
-            400
-          );
+          throw new HttpException(space_has_already_relation_object(),400);
         }
       }
     } catch (error) {
@@ -1904,13 +1901,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           error.status
         );
       } else {
-        throw new HttpException(
-          {
-            code: CustomClassificationError.DEFAULT_ERROR,
-            message: error.message,
-          },
-          error.status
-        );
+        throw new HttpException(error,500);
       }
     }
   }

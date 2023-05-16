@@ -51,9 +51,17 @@ export const zone_already_exist_object: errorObject ={
       code: CustomClassificationError.ZONE_ALREADY_EXIST,
 }
   
-export const space_has_already_relation_object: errorObject ={
-      message: 'error',
-      code: CustomClassificationError.SPACE_HAS_ALREADY_RELATION,
+// export const space_has_already_relation_object: errorObject ={
+//       message: 'error',
+//       code: CustomClassificationError.SPACE_HAS_ALREADY_RELATION,
+// }
+
+export function space_has_already_relation_object(){
+      return {
+            message: 'error',
+            code: CustomClassificationError.SPACE_HAS_ALREADY_RELATION
+      }
+   
 }
 
 export const  contact_already_exist_object: errorObject ={
