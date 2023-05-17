@@ -74,9 +74,12 @@ export const  there_are_no_spaces_object: errorObject ={
       code: CustomClassificationError.THERE_ARE_NO_SPACES,
 }
 
-export const  there_are_no_jointSpaces_object: errorObject= {
-      message: 'error',
-      code: CustomClassificationError.THERE_ARE_NO_JOINTSPACES,
+export function  there_are_no_jointSpaces_object(){
+      return {
+            message: 'error',
+            code: CustomClassificationError.THERE_ARE_NO_JOINTSPACES
+      }
+    
 }
 
 export const  there_are_no_zones_object: errorObject= {

@@ -230,9 +230,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           error.status
         );
       } else {
-        throw new HttpException(
-        error,500
-        );
+        throw new HttpException(error,500);
       }
     }
   }
@@ -364,13 +362,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           error.status
         );
       } else {
-        throw new HttpException(
-          {
-            code: CustomClassificationError.DEFAULT_ERROR,
-            message: error.message,
-          },
-          error.status
-        );
+        throw new HttpException(error,500);
       }
     }
   }
@@ -436,13 +428,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           error.status
         );
       } else {
-        throw new HttpException(
-          {
-            code: CustomClassificationError.DEFAULT_ERROR,
-            message: error.message,
-          },
-          error.status
-        );
+        throw new HttpException(error,500);
       }
     }
   }
@@ -503,13 +489,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           error.status
         );
       } else {
-        throw new HttpException(
-          {
-            code: CustomClassificationError.DEFAULT_ERROR,
-            message: error.message,
-          },
-          error.status
-        );
+        throw new HttpException(error,500);
       }
     }
   }
@@ -600,13 +580,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           error.status
         );
       } else {
-        throw new HttpException(
-          {
-            code: CustomClassificationError.DEFAULT_ERROR,
-            message: error.message,
-          },
-          error.status
-        );
+        throw new HttpException(error,500);
       }
     }
   }
@@ -793,13 +767,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           error.status
         );
       } else {
-        throw new HttpException(
-          {
-            code: CustomClassificationError.DEFAULT_ERROR,
-            message: error.message,
-          },
-          error.status
-        );
+        throw new HttpException(error,500);
       }
     }
   }
@@ -830,7 +798,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       data = await returnData.records[0]["_fields"][0];
 
       if (Object.keys(data?.value).length == 0) {
-        throw new HttpException(there_are_no_jointSpaces_object, 404);
+        throw new HttpException(there_are_no_jointSpaces_object(), 404);
       }
 
       for (let index = 0; index < data.value.parent_of?.length; index++) {
@@ -845,7 +813,6 @@ export class Neo4jExcelService implements OnApplicationShutdown {
             buildingName: data.value.name,
             jointSpaceName: jointSpaceProperties.name,
             category: jointSpaceProperties.classified_by[0].name,
-            createdBy: jointSpaceProperties.created_by[0].name,
             spaceNames: jointSpaceProperties.jointSpaceTitle,
             description: jointSpaceProperties.description,
             tags: jointSpaceProperties.tag.toString(),
@@ -948,13 +915,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           error.status
         );
       } else {
-        throw new HttpException(
-          {
-            code: CustomClassificationError.DEFAULT_ERROR,
-            message: error.message,
-          },
-          error.status
-        );
+        throw new HttpException(error,500);
       }
     }
   }
@@ -1021,13 +982,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           error.status
         );
       } else {
-        throw new HttpException(
-          {
-            code: CustomClassificationError.DEFAULT_ERROR,
-            message: error.message,
-          },
-          error.status
-        );
+        throw new HttpException(error,500);
       }
     }
   }
@@ -1080,13 +1035,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           error.status
         );
       } else {
-        throw new HttpException(
-          {
-            code: CustomClassificationError.DEFAULT_ERROR,
-            message: error.message,
-          },
-          error.status
-        );
+        throw new HttpException(error,500);
       }
       // if(error.response?.code===10012){
       //   there_are_no_zones()
@@ -1148,13 +1097,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           error.status
         );
       } else {
-        throw new HttpException(
-          {
-            code: CustomClassificationError.DEFAULT_ERROR,
-            message: error.message,
-          },
-          error.status
-        );
+        throw new HttpException(error,500);
       }
     }
   }
@@ -1221,13 +1164,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           error.status
         );
       } else {
-        throw new HttpException(
-          {
-            code: CustomClassificationError.DEFAULT_ERROR,
-            message: error.message,
-          },
-          error.status
-        );
+        throw new HttpException(error,500);
       }
     }
   }
@@ -1318,9 +1255,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           error.status
         );
       } else {
-        throw new HttpException(
-         error,500
-        );
+        throw new HttpException(error,500);
       }
     }
   }
@@ -1401,13 +1336,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           error.status
         );
       } else {
-        throw new HttpException(
-          {
-            code: CustomClassificationError.DEFAULT_ERROR,
-            message: error.message,
-          },
-          error.status
-        );
+        throw new HttpException(error,500);
       }
     }
   }
@@ -1522,13 +1451,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           error.status
         );
       } else {
-        throw new HttpException(
-          {
-            code: CustomClassificationError.DEFAULT_ERROR,
-            message: error.message,
-          },
-          error.status
-        );
+        throw new HttpException(error,500);
       }
     }
   }
@@ -1651,9 +1574,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           error.status
         );
       } else {
-        throw new HttpException(
-          error,500
-        );
+        throw new HttpException(error,500);
       }
     }
   }
@@ -1826,9 +1747,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           error.status
         );
       } else {
-        throw new HttpException(
-         error,500
-        );
+        throw new HttpException(error,500);
       }
     }
   }
@@ -1996,13 +1915,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           error.status
         );
       } else {
-        throw new HttpException(
-          {
-            code: CustomClassificationError.DEFAULT_ERROR,
-            message: error.message,
-          },
-          error.status
-        );
+        throw new HttpException(error,500);
       }
     }
   }
@@ -2035,14 +1948,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
         createdRelationCypher: createRelationCypher.join(" "),
       };
     } catch (error) {
-      throw new HttpException(
-        {
-          code: CustomClassificationError.DEFAULT_ERROR,
-          message: error.message,
-        },
-        error.status
-      );
-    
+      throw new HttpException(error,500);
     }
   
   }
@@ -2066,13 +1972,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
     MERGE (z)-[:PARENT_OF {isDeleted:false}]->(zz)`;
     }
     } catch (error) {
-      throw new HttpException(
-        {
-          code: CustomClassificationError.DEFAULT_ERROR,
-          message: error.message,
-        },
-        error.status
-      );
+      throw new HttpException(error,500);
     }
     
   }
@@ -2090,13 +1990,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       }",tag:[],key:"${this.keyGenerate()}"})`;
     }
     } catch (error) {
-      throw new HttpException(
-        {
-          code: 123,
-          message: error.message,
-        },
-        error.status
-      );
+      throw new HttpException(error,500);
     }
     
   }
@@ -2122,47 +2016,51 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       MERGE (s)-[:CREATED_BY {isDeleted:false}]->(cnt) MERGE (s)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(cnt)`;
       }
     } catch (error) {
-      throw new HttpException(
-        {
-          code: CustomClassificationError.DEFAULT_ERROR,
-          message: error.message,
-        },
-        error.status
-      );
+      throw new HttpException(error,500);
     }
   
   }
 
   async componentAlreadyExist(realm:string,data:string[]){
-     let cypher = `MATCH (n:Types {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(t:Type {name:"${data[4]}",isDeleted:false}) \ 
+
+    try {
+      let cypher = `MATCH (n:Types {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(t:Type {name:"${data[4]}",isDeleted:false}) \ 
       MATCH (t)-[:PARENT_OF {isDeleted:false}]->(c:Component {name:"${data[1]}",isDeleted:false}) return c`;
       let returnData = await this.read(cypher);
-    return returnData.records;
+      return returnData.records;
+    } catch (error) {
+      throw new HttpException(error,500);
+    }
+    
 }
 
   async createComponent(realm:string,data:string[],warrantyGuarantorPartsReferenceId:string,warrantyGuarantorLaborReferenceKeyId:string,warrantyDurationLabor:string,warrantyDurationParts:string,spaceAndCreatedByArray:string[],wgpAndWglNames:string[],urlContact:string,urlStructure:string){
+ try {
+  let cypher =`MATCH (tt:Types {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(t:Type {name:"${data[4]}",isDeleted:false}) \
+  MERGE (c:Component {className:"Component",name:"${data[1]}",createdAt:"${data[3]}",description:"${data[6]}",externalSystem:"${data[7]}",externalObject:"${data[8]}", \
+  externalIdentifier:"${data[9]}",serialNumber:"${data[10]}",installationDate:"${data[11]}",warrantyStartDate:"${data[12]}",tagNumber:"${data[13]}", \
+  barCode:"${data[14]}",assetIdentifier:"${data[15]}",key:"${this.keyGenerate()}",warrantyDurationLabor:${+warrantyDurationLabor}.0,warrantyDurationParts:${+warrantyDurationParts}.0,warrantyDurationUnit:"",tag:[],spaceName:"${spaceAndCreatedByArray[1]['name']}",isDeleted:false,canDelete:true,isActive:true,canDisplay:true}) \
+  SET c+={id:toFloat(Id(c))}
+  MERGE (wgp :Contact :Virtual {key:"${this.keyGenerate()}",referenceId:"${warrantyGuarantorPartsReferenceId}",name:"${wgpAndWglNames[0]['name']}",virtualPropertyField:"email",referenceLabel:["Contact"],type:"warrantyGuarantorParts",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true, urlType:"GET"}) \
+  SET wgp+={url:"${urlContact}/"+"${warrantyGuarantorPartsReferenceId}"}  \
+  MERGE (wgl :Contact :Virtual {key:"${this.keyGenerate()}",referenceId:"${warrantyGuarantorLaborReferenceKeyId}",name:"${wgpAndWglNames[1]['name']}",virtualPropertyField:"email",referenceLabel:["Contact"],type:"warrantyGuarantorLabor",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true, urlType:"GET"}) \
+  SET wgl+={url:"${urlContact}/"+"${warrantyGuarantorLaborReferenceKeyId}"}  \
+  MERGE (cnt :Contact :Virtual {key:"${this.keyGenerate()}",referenceId:"${spaceAndCreatedByArray[0]['id']}",name:"${wgpAndWglNames[2]['name']}",virtualPropertyField:"email",referenceLabel:["Contact"],type:"createdBy",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true, urlType:"GET"}) \
+  SET cnt+={url:"${urlContact}/"+"${spaceAndCreatedByArray[0]['id']}"}  \
+  MERGE (spc :FacilityStructure :Virtual {key:"${this.keyGenerate()}",referenceId:"${spaceAndCreatedByArray[1]['id']}",name:"${spaceAndCreatedByArray[1]['name']}",virtualPropertyField:"name",referenceLabel:["Space"],type:"structure",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true, urlType:"POST"}) \
+  SET spc+={url:"${urlStructure}"}  \
+  MERGE (t)-[:PARENT_OF {isDeleted:false}]->(c) \
+  MERGE (c)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(wgp) MERGE (c)-[:WARRANTY_GUARANTOR_PARTS_BY {isDeleted:false}]->(wgp) \
+  MERGE (c)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(wgl) MERGE (c)-[:WARRANTY_GUARANTOR_LABOR_BY {isDeleted:false}]->(wgl) \
+  MERGE (c)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(cnt) MERGE (c)-[:CREATED_BY {isDeleted:false}]->(cnt) \
+  MERGE (c)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(spc) MERGE (c)-[:LOCATED_IN {isDeleted:false}]->(spc);`
+
+    await this.write(cypher);
+
+ } catch (error) {
+  throw new HttpException(error,500);
+ }
  
-    let cypher =`MATCH (tt:Types {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(t:Type {name:"${data[4]}",isDeleted:false}) \
-    MERGE (c:Component {className:"Component",name:"${data[1]}",createdAt:"${data[3]}",description:"${data[6]}",externalSystem:"${data[7]}",externalObject:"${data[8]}", \
-    externalIdentifier:"${data[9]}",serialNumber:"${data[10]}",installationDate:"${data[11]}",warrantyStartDate:"${data[12]}",tagNumber:"${data[13]}", \
-    barCode:"${data[14]}",assetIdentifier:"${data[15]}",key:"${this.keyGenerate()}",warrantyDurationLabor:${+warrantyDurationLabor}.0,warrantyDurationParts:${+warrantyDurationParts}.0,warrantyDurationUnit:"",tag:[],spaceName:"${spaceAndCreatedByArray[1]['name']}",isDeleted:false,canDelete:true,isActive:true,canDisplay:true}) \
-    SET c+={id:toFloat(Id(c))}
-    MERGE (wgp :Contact :Virtual {key:"${this.keyGenerate()}",referenceId:"${warrantyGuarantorPartsReferenceId}",name:"${wgpAndWglNames[0]['name']}",virtualPropertyField:"email",referenceLabel:["Contact"],type:"warrantyGuarantorParts",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true, urlType:"GET"}) \
-    SET wgp+={url:"${urlContact}/"+"${warrantyGuarantorPartsReferenceId}"}  \
-    MERGE (wgl :Contact :Virtual {key:"${this.keyGenerate()}",referenceId:"${warrantyGuarantorLaborReferenceKeyId}",name:"${wgpAndWglNames[1]['name']}",virtualPropertyField:"email",referenceLabel:["Contact"],type:"warrantyGuarantorLabor",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true, urlType:"GET"}) \
-    SET wgl+={url:"${urlContact}/"+"${warrantyGuarantorLaborReferenceKeyId}"}  \
-    MERGE (cnt :Contact :Virtual {key:"${this.keyGenerate()}",referenceId:"${spaceAndCreatedByArray[0]['id']}",name:"${wgpAndWglNames[2]['name']}",virtualPropertyField:"email",referenceLabel:["Contact"],type:"createdBy",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true, urlType:"GET"}) \
-    SET cnt+={url:"${urlContact}/"+"${spaceAndCreatedByArray[0]['id']}"}  \
-    MERGE (spc :FacilityStructure :Virtual {key:"${this.keyGenerate()}",referenceId:"${spaceAndCreatedByArray[1]['id']}",name:"${spaceAndCreatedByArray[1]['name']}",virtualPropertyField:"name",referenceLabel:["Space"],type:"structure",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true, urlType:"POST"}) \
-    SET spc+={url:"${urlStructure}"}  \
-    MERGE (t)-[:PARENT_OF {isDeleted:false}]->(c) \
-    MERGE (c)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(wgp) MERGE (c)-[:WARRANTY_GUARANTOR_PARTS_BY {isDeleted:false}]->(wgp) \
-    MERGE (c)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(wgl) MERGE (c)-[:WARRANTY_GUARANTOR_LABOR_BY {isDeleted:false}]->(wgl) \
-    MERGE (c)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(cnt) MERGE (c)-[:CREATED_BY {isDeleted:false}]->(cnt) \
-    MERGE (c)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(spc) MERGE (c)-[:LOCATED_IN {isDeleted:false}]->(spc);`
-
-      await this.write(cypher);
-
 }
 
   async createSystem(realm:string,data:string[],creatingCypher:string,createdCypher:string,emailData:string){
@@ -2211,10 +2109,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
         await this.write(systemCypher);
       }
 } catch (error) {
-  throw new HttpException(
-    error,
-    500
-  );
+  throw new HttpException(error,500);
 }   
   }
 
@@ -2236,13 +2131,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       MERGE (sys)-[:PARENT_OF {isDeleted:false}]->(s)`;
       }
     } catch (error) {
-      throw new HttpException(
-        {
-          code: CustomClassificationError.DEFAULT_ERROR,
-          message: error.message,
-        },
-        error.status
-      );
+      throw new HttpException(error,500);
     }
    
   }
@@ -2265,13 +2154,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       MERGE (ss)-[:PARENT_OF {isDeleted:false}]->(s)`;
       }
     } catch (error) {
-      throw new HttpException(
-        {
-          code: CustomClassificationError.DEFAULT_ERROR,
-          message: error.message,
-        },
-        error.status
-      );
+      throw new HttpException(error,500);
     }
 }
 
@@ -2285,13 +2168,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       let result ={key:data.records[0]["_fields"][0].properties.key,id:data.records[0]["_fields"][0].identity.low};
       return result;
     } catch (error) {
-      throw new HttpException(
-        {
-          code: CustomClassificationError.DEFAULT_ERROR,
-          message: error.message,
-        },
-        error.status
-      );
+      throw new HttpException(error,500);
     }
   }
 
@@ -2309,13 +2186,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       let object={id:data.records[0]['_fields'][0].identity.low,key:data.records[0]["_fields"][0].properties.key,name:data.records[0]["_fields"][0].properties.name};
       return object;
     } catch (error) {
-      throw new HttpException(
-        {
-          code: CustomClassificationError.DEFAULT_ERROR,
-          message: error.message,
-        },
-        error.status
-      );
+      throw new HttpException(error,500);
     }
   }
 
@@ -2338,13 +2209,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       }
       return returningDatas;
     } catch (error) {
-      throw new HttpException(
-        {
-          code: CustomClassificationError.DEFAULT_ERROR,
-          message: error.message,
-        },
-        error.status
-      );
+      throw new HttpException(error,500);
     }
    
   };
