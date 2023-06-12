@@ -36,7 +36,6 @@ import {
   there_are_no_contacts_object,
   there_are_no_jointSpaces_object,
   there_are_no_spaces_object,
-  there_are_no_system_or_component_or_both_object,
   there_are_no_system_or_component_or_type_object,
   there_are_no_type_or_component_or_type_id_is_wrong_object,
   there_are_no_zones_object,
@@ -1660,9 +1659,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
               MATCH (b)-[:PARENT_OF {isDeleted:false}]->(blck:Block {name:"${data[i][1]}",isDeleted:false})-[:PARENT_OF {isDeleted:false}]->(f:Floor {name:"${
                 data[i][9]
               }",isDeleted:false}) \
-              MERGE (s:Space {name:"${
-                data[i][2]}
-              ",code:"${data[i][4]}",architecturalCode:"${data[i][5]}",architecturalName:"${
+              MERGE (s:Space {name:"${data[i][2]}",code:"${data[i][4]}",architecturalCode:"${data[i][5]}",architecturalName:"${
                   data[i][3]
                 }",createdAt:"${
                   data[i][7]
@@ -1938,7 +1935,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
   
       for (let index = 0; index < datasLength.length; index++) {
         let createdCypher = ` MATCH (${classificationParentPlaceholder}${index}:${classificationLabel}_${datasLength[index]["_fields"][0].properties.name} {realm:"${realm}"})-[:PARENT_OF* {isDeleted:false}]->(${classificationChildrenPlaceholder}${index} {code:"${categoryCode}",language:"${datasLength[index]["_fields"][0].properties.name}"})`;
-        let createdRelationCypher = `MERGE (${nodeName})-[:${relationName} {isDeleted:false} ]->(${classificationChildrenPlaceholder}${index}) `;
+        let createdRelationCypher = ` MERGE (${nodeName})-[:${relationName} {isDeleted:false} ]->(${classificationChildrenPlaceholder}${index}) `;
         createCypherArray.push(createdCypher);
         createRelationCypher.push(createdRelationCypher);
       }
