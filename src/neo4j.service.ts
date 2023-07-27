@@ -1496,7 +1496,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
 
           if(data[i][1]){
            
-            let cypher = `MATCH (fs:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]-(b:Building {isDeleted:false ,key:"${buildingKey}"})-[:PARENT_OF {isDeleted:false}]->(blck:Block {name:"${data[i][1]}",isDeleted:false})-[:PARENT_OF {isDeleted:false}]->(f:Floor {name:"${data[i][1]}",isDeleted:false}) return f;`
+            let cypher = `MATCH (fs:FacilityStructure {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]-(b:Building {isDeleted:false ,key:"${buildingKey}"})-[:PARENT_OF {isDeleted:false}]->(blck:Block {name:"${data[i][1]}",isDeleted:false})-[:PARENT_OF {isDeleted:false}]->(f:Floor {name:"${data[i][2]}",isDeleted:false}) return f;`
             let checkFloor = await this.read(cypher);
 
             if(checkFloor.records.length==0){
