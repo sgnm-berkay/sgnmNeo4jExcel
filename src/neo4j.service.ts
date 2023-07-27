@@ -1769,7 +1769,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       });
 
       for (let i = 1; i < data.length; i++) {
-        let cypher = `MATCH (n:Building {key:"${buildingKey}",isDeleted:false})-[:PARENT_OF* {isDeleted:false}]->(s:Space {code:"${data[i][5]}",isDeleted:false}) \ 
+        let cypher = `MATCH (n:Building {key:"${buildingKey}",isDeleted:false})-[:PARENT_OF* {isDeleted:false}]->(s:Space {architecturalCode:"${data[i][5]}",isDeleted:false}) \ 
   MATCH (s)-[:MERGEDZN {isDeleted:false}]->(z:Zone {name:"${data[i][1]}",isDeleted:false}) return z`;
         let returnData = await this.read(cypher);
 
@@ -1792,7 +1792,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           }
 
           let cypher = `MATCH (b:Building {key:"${buildingKey}"})-[:PARENT_OF]->(z:Zones {name:"Zones"})\
-   MATCH (c:Space {locationCode:"${data[i][5]}",isDeleted:false})\
+   MATCH (c:Space {architecturalCode:"${data[i][5]}",isDeleted:false})\
    MATCH (cnt:Contacts {realm:"${realm}"})-[:PARENT_OF]->(p:Contact {email:"${email}",isDeleted:false})\
    ${createdCypher} \
    ${await this.getZoneFromDb(buildingKey, data[i])} \
