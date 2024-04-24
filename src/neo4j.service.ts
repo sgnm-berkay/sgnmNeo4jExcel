@@ -711,6 +711,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
       worksheet.columns = [
         { header: "System Name", key: "systemName", width: 50 },
         { header: "System Description", key: "systemDescription", width: 50 },
+        { header: "Creator", key: "creator", width: 50 },
         { header: "Type Name", key: "typeName", width: 50 },
         { header: "Component Name", key: "componentName", width: 50 },
         { header: "Space Name", key: "spaceName", width: 50 },
@@ -748,7 +749,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
     try {
       let data: any;
       let jsonData = [];
-      let cypher = `WITH 'MATCH (a:Asset {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Systems)-[:PARENT_OF* {isDeleted:false}]->(s:System {key:"${systemKey}",isDeleted:false}) MATCH path = (s)-[:SYSTEM_OF|TYPE_OF_SYSTEM {isDeleted:false}]->(ct) where  ct.isDeleted=false
+      let cypher = `WITH 'MATCH (a:Asset {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Systems)-[:PARENT_OF* {isDeleted:false}]->(s:System {key:"${systemKey}",isDeleted:false}) MATCH path = (s)-[:SYSTEM_OF | TYPE_OF_SYSTEM | CREATED_BY {isDeleted:false}]->(ct) where  ct.isDeleted=false
       WITH collect(path) AS paths
       CALL apoc.convert.toTree(paths)
       YIELD value
@@ -777,14 +778,15 @@ export class Neo4jExcelService implements OnApplicationShutdown {
 
           if(data.value.system_of?.length>0){
             for (let c = 0; c < data.value.system_of?.length; c++) {
-              // components or type
+              // components
   
               let componentProperties = data.value.system_of[c];
-              //let typeProperties = data.value.type_of_system[c];
+             
   
               jsonData.push({
                 systemName: data.value.name,
                 systemDescription: data.value.description,
+                creator: data.value.created_by[0].name,
                 typeName: "",
                 componentName: componentProperties.name,
                 spaceName: componentProperties.spaceName,
@@ -799,13 +801,14 @@ export class Neo4jExcelService implements OnApplicationShutdown {
           }
            if(data.value.type_of_system?.length>0){
             for (let c = 0; c < data.value.type_of_system?.length; c++) {
-              // components or type
+             // types
   
               let typeProperties = data.value.type_of_system[c];
   
               jsonData.push({
                 systemName: data.value.name,
                 systemDescription: data.value.description,
+                creator: data.value.created_by[0].name,
                 typeName: typeProperties.name ? typeProperties.name:"",
                 componentName: "",
                 spaceName: "",
