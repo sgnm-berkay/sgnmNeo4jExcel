@@ -433,6 +433,132 @@ export class Neo4jExcelService implements OnApplicationShutdown {
     }
   }
 
+  async getSparesWithExcel(
+    res,
+    body: ExportExcelDtoForType,
+    header: UserInformationInterface
+  ) {
+    let data = [];
+    const { typeKeys } = body;
+    const { username, realm,language } = header;
+    try {
+      for (let key of typeKeys) {
+        let newData = await this.getSparesOfTypeWithTypekey(
+          realm,
+          key,
+          username,
+          language
+        );
+
+        if (newData instanceof Error) {
+          throw new HttpException(
+            there_are_no_type_or_component_or_type_id_is_wrong_object,
+            404
+          );
+        } else {
+          data = [...data, ...newData];
+        }
+      }
+
+      let workbook = new exceljs.Workbook();
+      let worksheet = workbook.addWorksheet("Spares");
+
+      worksheet.columns = [
+        { header: "Type Name", key: "typeName", width: 50 },
+        { header: "Spare Name", key: "spareName", width: 50 },
+        { header: "Space Name", key: "spaceName", width: 50 },
+        { header: "Count", key: "count", width: 50 },
+        { header: "Description", key: "description", width: 50 },
+        { header: "PartNumber", key: "partNumber", width: 50 },
+        { header: "SetNumber", key: "setNumber", width: 50 },
+      ];
+
+      worksheet.addRows(data);
+
+      return workbook.xlsx.write(res).then(function () {
+        res.status(200).end();
+      });
+    } catch (error) {
+      if (error.response?.code) {
+        throw new HttpException(
+          { message: error.response?.message, code: error.response?.code },
+          error.status
+        );
+      } else {
+        throw new HttpException(error,500);
+      }
+    }
+  }
+
+  async getSparesOfTypeWithTypekey(
+    realm: string,
+    typeKey: string,
+    username: string,
+    language:string
+  ) {
+    try {
+      let data: any;
+      let jsonData = [];
+      let cypher = `WITH 'MATCH (a:Asset {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Types) MATCH path = (b)-[:PARENT_OF {isDeleted:false}]->(t:Type {key:"${typeKey}"})-[:PARENT_OF {isDeleted:false}]->(c:Spare)-[:CLASSIFIED_BY  | STORED_IN {isDeleted:false}]->(x) where (x.language="${language}" or not exists(x.language)) and t.isDeleted=false and c.isDeleted=false
+      WITH collect(path) AS paths
+      CALL apoc.convert.toTree(paths)
+      YIELD value
+      RETURN value' AS query
+      CALL apoc.export.json.query(query,'/${username}.json',{jsonFormat:'ARRAY_JSON'})
+      YIELD file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data
+      RETURN file, source, format, nodes, relationships, properties, time, rows, batchSize, batches, done, data`;
+
+      await this.write(cypher);
+
+      //call the file using below code
+      let cypher2 = `CALL apoc.load.json("${username}.json")`;
+
+      let returnData = await this.read(cypher2);
+      data = await returnData.records[0]["_fields"][0];
+
+      if (data.length == 0) {
+        throw new HttpException(
+          there_are_no_type_or_component_or_type_id_is_wrong_object,
+          404
+        );
+      } else {
+        for (let j = 0; j < data.value.parent_of?.length; j++) {
+          // type
+          for (let i = 0; i < data.value.parent_of[j].parent_of?.length; i++) {
+            // spares
+
+            let spareProperties = data.value.parent_of[j].parent_of[i];
+
+            jsonData.push({
+              typeName: data.value.parent_of[j].name,
+              spareName: spareProperties.name,
+              spaceName: spareProperties.stored_in[0].name,
+              count: spareProperties.count,
+              description: spareProperties.description,
+              partNumber: spareProperties.partNumber,
+              setNumber: spareProperties.setNumber,
+            });
+          }
+        }
+
+        return jsonData;
+      }
+    } catch (error) {
+      if (error.response?.code) {
+        throw new HttpException(
+          { message: error.response?.message, code: error.response?.code },
+          error.status
+        );
+      } else {
+        throw new HttpException(error,500);
+      }
+    }
+  }
+
+
+
+
+
   async getSystemsExcel(
     res,
     body: ExportExcelDtoForSystem,
