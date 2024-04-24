@@ -173,7 +173,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
     try {
       let data = [];
       const { typeKeys } = body;
-      const { username, language, realm } = header;
+      const { username="berko", language, realm } = header;
       for (let key of typeKeys) {
         let newData = await this.getTypesByRealmAndByLanguage(
           realm,
