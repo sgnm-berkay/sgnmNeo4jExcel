@@ -308,7 +308,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
   ) {
     let data = [];
     const { typeKeys } = body;
-    const { username, realm } = header;
+    const { username="berko", realm } = header;
     try {
       for (let key of typeKeys) {
         let newData = await this.getComponentsOfTypeWithTypekey(
@@ -335,7 +335,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
         { header: "Component Name", key: "componentName", width: 50 },
         { header: "Space Name", key: "spaceName", width: 50 },
         { header: "Description", key: "description", width: 50 },
-        { header: "Street", key: "street", width: 50 },
+        { header: "AssetIdentifier", key: "assetIdentifier", width: 50 },
         { header: "Serial No", key: "serialNo", width: 50 },
         {
           header: "Warranty Duration Labor",
@@ -374,7 +374,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
     try {
       let data: any;
       let jsonData = [];
-      let cypher = `WITH 'MATCH (a:Asset {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Types) MATCH path = (b)-[:PARENT_OF {isDeleted:false}]->(t:Type {key:"${typeKey}"})-[:PARENT_OF {isDeleted:false}]->(c:Component) where  t.isDeleted=false and c.isDeleted=false
+      let cypher = `WITH 'MATCH (a:Asset {realm:"${realm}"})-[:PARENT_OF {isDeleted:false}]->(b:Types) MATCH path = (b)-[:PARENT_OF {isDeleted:false}]->(t:Type {key:"${typeKey}"})-[:PARENT_OF {isDeleted:false}]->(c:Component)-[:WARRANTY_GUARANTOR_LABOR_BY | WARRANTY_GUARANTOR_PARTS_BY | LOCATED_IN {isDeleted:false}]->(x) where  t.isDeleted=false and c.isDeleted=false
       WITH collect(path) AS paths
       CALL apoc.convert.toTree(paths)
       YIELD value
@@ -407,13 +407,14 @@ export class Neo4jExcelService implements OnApplicationShutdown {
             jsonData.push({
               typeName: data.value.parent_of[j].name,
               componentName: componentProperties.name,
-              spaceName: componentProperties.spaceName,
+              spaceName: componentProperties.located_in[0].name,
               description: componentProperties.description,
+              assetIdentifier: componentProperties.assetIdentifier,
               serialNo: componentProperties.serialNo,
               warrantyDurationLabor:
-                componentProperties.warrantyDurationLabor.low,
+                componentProperties.warrantyDurationLabor,
               warrantyDurationParts:
-                componentProperties.warrantyDurationParts.low,
+                componentProperties.warrantyDurationParts,
             });
           }
         }
