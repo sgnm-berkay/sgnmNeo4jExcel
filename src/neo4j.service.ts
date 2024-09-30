@@ -1836,6 +1836,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
             message: errorMessage,
             code: error.response?.code,
             name: error.response?.name,
+            currentRow
           },
           error.status
         );
@@ -2027,6 +2028,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
             message: errorMessage,
             code: error.response?.code,
             name: error.response?.name,
+            currentRow
           },
           error.status
         );
@@ -2109,6 +2111,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
             message: error.response?.message,
             code: error.response?.code,
             name: error.response?.name,
+            currentRow
           },
           error.status
         );
@@ -2230,6 +2233,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
             message: errorMessage,
             code: error.response?.code,
             name: error.response?.name,
+            currentRow
           },
           error.status
         );
