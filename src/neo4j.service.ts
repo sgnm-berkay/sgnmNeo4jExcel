@@ -2364,7 +2364,7 @@ export class Neo4jExcelService implements OnApplicationShutdown {
   externalIdentifier:"${data[9]}",serialNumber:"${data[10]}",installationDate:"${data[11]}",warrantyStartDate:"${data[12]}",tagNumber:"${data[13]}", \
   barCode:"${data[14]}",assetIdentifier:"${data[15]}",key:apoc.create.uuid(),warrantyDurationLabor:${+warrantyDurationLabor}.0,warrantyDurationParts:${+warrantyDurationParts}.0,warrantyDurationUnit:"",tag:[],spaceName:"${spaceAndCreatedByArray[1]['name']}",isDeleted:false,canDelete:true,isActive:true,canDisplay:true}) \
   SET c+={id:toFloat(Id(c))} \
-  SET c.name = c.name + "-" + id(c)
+  SET c.name = c.name + "-" + id(c) \
   MERGE (wgp :Contact :Virtual {trId:"${trId}",key:apoc.create.uuid(),referenceId:"${warrantyGuarantorPartsReferenceId}",name:"${wgpAndWglNames[0]['name']}",virtualPropertyField:"email",referenceLabel:["Contact"],type:"warrantyGuarantorParts",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true, urlType:"GET"}) \
   SET wgp+={url:"${urlContact}/"+"${warrantyGuarantorPartsReferenceId}"}  \
   MERGE (wgl :Contact :Virtual {trId:"${trId}",key:apoc.create.uuid(),referenceId:"${warrantyGuarantorLaborReferenceKeyId}",name:"${wgpAndWglNames[1]['name']}",virtualPropertyField:"email",referenceLabel:["Contact"],type:"warrantyGuarantorLabor",isDeleted:false,createdAt:"${moment().format('YYYY-MM-DD HH:mm:ss')}",canDelete:true, urlType:"GET"}) \
