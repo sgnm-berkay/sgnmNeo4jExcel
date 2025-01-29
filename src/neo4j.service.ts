@@ -2380,8 +2380,8 @@ export class Neo4jExcelService implements OnApplicationShutdown {
   MERGE (c)-[:HAS_VIRTUAL_RELATION {isDeleted:false}]->(spc) MERGE (c)-[:LOCATED_IN {isDeleted:false}]->(spc) \
   RETURN c.name;`
 
-  const result = await this.write(cypher); 
-  const componentName = result[0]?.get("c.name"); 
+  const {records} = await this.write(cypher);
+  const componentName = records[0]?.['_fields'][0];
   return componentName;
 
  } catch (error) {
